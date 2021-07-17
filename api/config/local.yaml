@@ -1,17 +1,17 @@
 
 database:
   type: "mysql"
-  host: "192.168.72.130"
+  host: "127.0.0.1"
   port: 3306
   user: "root"
-  password: "root"
+  password: "111111"
   name: "some"
   tablePrefix: ""
 
 redis:
-  host: "192.168.72.130:6379"
+  host: "127.0.0.1:6379"
   db: 1
-  password: "gelu8888"
+  password: "102redis"
   maxIdle: 20
   maxActive: 10
   idleTimeout: 5000000000

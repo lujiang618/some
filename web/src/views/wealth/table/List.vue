@@ -117,7 +117,7 @@
 <script>
 import moment from 'moment'
 import { STable } from '@/components'
-import { getRoleList, getServiceList } from '@/api/manage'
+import { getRoleList, getServiceList } from '@/api/wealth'
 
 export default {
   name: 'TableList',
@@ -138,27 +138,27 @@ export default {
           scopedSlots: { customRender: 'serial' }
         },
         {
-          title: '规则编号',
+          title: '日期',
           dataIndex: 'no'
         },
         {
-          title: '描述',
+          title: '类别',
           dataIndex: 'description'
         },
         {
-          title: '服务调用次数',
+          title: '内容',
           dataIndex: 'callNo',
           sorter: true,
           needTotal: true,
           customRender: (text) => text + ' 次'
         },
         {
-          title: '状态',
+          title: '金额',
           dataIndex: 'status',
           needTotal: true
         },
         {
-          title: '更新时间',
+          title: '备注',
           dataIndex: 'updatedAt',
           sorter: true
         },
