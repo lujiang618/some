@@ -5,58 +5,62 @@
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="规则编号"
+        label="日期"
         hasFeedback
         validateStatus="success"
       >
-        <a-input
-          placeholder="规则编号"
-          v-decorator="[
-            'no',
-            {rules: [{ required: true, message: '请输入规则编号' }]}
-          ]"
-          :disabled="true"
-        ></a-input>
+        <a-date-picker
+          style="width: 100%"
+          showTime
+          format="YYYY-MM-DD"
+          placeholder="Select Time"
+          v-decorator="['occur_date']"
+          :defaultValue="moment(getCurrentData(), 'YYYY-MM-DD')"
+        />
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="服务调用次数"
+        label="类别"
         hasFeedback
         validateStatus="success"
       >
-        <a-input-number :min="1" style="width: 100%" v-decorator="['callNo', {rules: [{ required: true }]}]" />
-      </a-form-item>
-
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="状态"
-        hasFeedback
-        validateStatus="warning"
-      >
-        <a-select v-decorator="['status', {rules: [{ required: true, message: '请选择状态' }], initialValue: '1'}]">
-          <a-select-option :value="1">Option 1</a-select-option>
-          <a-select-option :value="2">Option 2</a-select-option>
-          <a-select-option :value="3">Option 3</a-select-option>
+        <a-select v-decorator="['category', {rules: [{ required: true, message: '请选择类别' }], initialValue: '1'}]">
+          <a-select-option v-for="item in categories" :key="item.id" >
+            {{ item.name }}
+          </a-select-option>
         </a-select>
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="描述"
+        label="内容"
         hasFeedback
-        help="请填写一段描述"
+        validateStatus="warning"
       >
-        <a-textarea :rows="5" placeholder="..." v-decorator="['description', {rules: [{ required: true }]}]" />
+        <a-select v-decorator="['content', {rules: [{ required: true, message: '请选择状态' }], initialValue: '1'}]">
+          <a-select-option v-for="item in categories" :key="item.id" >
+            {{ item.name }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="更新时间"
+        label="金额"
+        hasFeedback
+        help="请填写一段描述"
+      >
+        <a-textarea :rows="5" placeholder="..." v-decorator="['金额', {rules: [{ required: true }]}]" />
+      </a-form-item>
+
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="备注"
         hasFeedback
         validateStatus="error"
       >
@@ -65,7 +69,7 @@
           showTime
           format="YYYY-MM-DD HH:mm:ss"
           placeholder="Select Time"
-          v-decorator="['updatedAt']"
+          v-decorator="['description']"
         />
       </a-form-item>
 
@@ -89,9 +93,14 @@
 <script>
 import moment from 'moment'
 import pick from 'lodash.pick'
+import { RouteView } from '@/layouts'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'TableEdit',
+  components: {
+    RouteView
+  },
   props: {
     record: {
       type: [Object, String],
@@ -114,6 +123,7 @@ export default {
           sm: { span: 12, offset: 5 }
         }
       },
+      categories: [],
       form: this.$form.createForm(this),
       id: 0
     }
@@ -121,12 +131,20 @@ export default {
   // beforeCreate () {
   //   this.form = this.$form.createForm(this)
   // },
+  created () {
+    this.getCategories()
+  },
   mounted () {
     this.$nextTick(() => {
       this.loadEditInfo(this.record)
     })
   },
   methods: {
+    moment,
+    ...mapActions(['CostCategories']),
+    getCurrentData () {
+      return new Date().toLocaleDateString()
+    },
     handleGoBack () {
       this.$emit('onGoBack')
     },
@@ -153,6 +171,16 @@ export default {
         formData.updatedAt = moment(data.updatedAt)
         console.log('formData', formData)
         form.setFieldsValue(formData)
+      })
+    },
+    getCategories () {
+      const { CostCategories } = this
+      CostCategories().then(res => {
+        if (res.result.data.length > 0) {
+          this.categories = res.result.data
+        }
+      }).catch((err) => {
+        console.log('category list', err)
       })
     }
   }

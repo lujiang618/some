@@ -117,7 +117,7 @@
 <script>
 import moment from 'moment'
 import { STable } from '@/components'
-import { getRoleList, getServiceList } from '@/api/wealth'
+import { getRoleList, getCostList } from '@/api/wealth'
 
 export default {
   name: 'TableList',
@@ -139,27 +139,27 @@ export default {
         },
         {
           title: '日期',
-          dataIndex: 'no'
+          dataIndex: 'occur_date'
         },
         {
           title: '类别',
-          dataIndex: 'description'
+          dataIndex: 'category'
         },
         {
           title: '内容',
-          dataIndex: 'callNo',
+          dataIndex: 'content',
           sorter: true,
           needTotal: true,
           customRender: (text) => text + ' 次'
         },
         {
           title: '金额',
-          dataIndex: 'status',
+          dataIndex: 'amount',
           needTotal: true
         },
         {
           title: '备注',
-          dataIndex: 'updatedAt',
+          dataIndex: 'description',
           sorter: true
         },
         {
@@ -171,10 +171,17 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
+        parameter.user_id = 1
         console.log('loadData.parameter', parameter)
-        return getServiceList(Object.assign(parameter, this.queryParam))
+        return getCostList(Object.assign(parameter, this.queryParam))
           .then(res => {
-            return res.result
+            return {
+              pageSize: res.result.page_size,
+              pageNo: res.result.page_no,
+              totalCount: res.result.total_count,
+              totalPage: res.result.total_page,
+              data: res.result.data
+            }
           })
       },
       selectedRowKeys: [],

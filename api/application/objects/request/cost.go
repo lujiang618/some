@@ -1,11 +1,11 @@
 package request
 
 type CostParamList struct {
-	UserId uint64
+	UserId uint64 `json:"user_id" form:"user_id"`
 }
 
 type CostParamDetail struct {
-	Id int
+	Id int `json:"id"`
 }
 
 type CostParamCreate struct {

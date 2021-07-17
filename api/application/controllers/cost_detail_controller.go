@@ -9,12 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CostDetail struct {
+type CostController struct {
 	BaseController
 	paramFilter *filter.CostDetail
 }
 
-func (ctl *CostDetail) GetList(c *gin.Context) {
+func NewCostController() *CostController {
+	return &CostController{
+		paramFilter: filter.NewCostDetail(),
+	}
+}
+
+func (ctl *CostController) GetList(c *gin.Context) {
 	data, err := ctl.paramFilter.GetList(c)
 	if err != nil {
 		api.SetResponse(c, http.StatusOK, err.Code, err.Message)
@@ -24,7 +30,7 @@ func (ctl *CostDetail) GetList(c *gin.Context) {
 	api.SetResponse(c, http.StatusOK, code.Success, data)
 }
 
-func (ctl *CostDetail) GetDetail(c *gin.Context) {
+func (ctl *CostController) GetDetail(c *gin.Context) {
 	detail, err := ctl.paramFilter.GetDetail(c)
 	if err != nil {
 		api.SetResponse(c, http.StatusOK, err.Code, err.Message)
@@ -34,11 +40,21 @@ func (ctl *CostDetail) GetDetail(c *gin.Context) {
 	api.SetResponse(c, http.StatusOK, code.Success, detail)
 }
 
-func (ctl *CostDetail) Create(c *gin.Context) {
+func (ctl *CostController) Create(c *gin.Context) {
 	if err := ctl.paramFilter.Create(c); err != nil {
 		api.SetResponse(c, http.StatusOK, err.Code, err.Message)
 		return
 	}
 
 	api.SetResponse(c, http.StatusOK, code.Success, "")
+}
+
+func (ctl *CostController) GetCostCategories(c *gin.Context) {
+	data, err := ctl.paramFilter.GetCategoryList(c)
+	if err != nil {
+		api.SetResponse(c, http.StatusOK, err.Code, err.Message)
+		return
+	}
+
+	api.SetResponse(c, http.StatusOK, code.Success, data)
 }

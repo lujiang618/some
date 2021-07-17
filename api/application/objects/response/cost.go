@@ -13,3 +13,28 @@ type CostDetailObject struct {
 	CreatedAt   utils.JSONTime `json:"created_at"  gorm:"-"`
 	UpdatedAt   utils.JSONTime `json:"updated_at"  gorm:"-"`
 }
+
+type CostListObject struct {
+	PageSize   int                 `json:"page_size"`
+	PageNo     int                 `json:"page_no"`
+	TotalCount int                 `json:"total_count"`
+	TotalPage  int                 `json:"total_page"`
+	Data       *[]CostDetailObject `json:"data"`
+}
+
+type CostCategoryObject struct {
+	Id        int            `json:"id" gorm:"primary_key"`
+	Name      uint64         `json:"name"`
+	UserId    int            `json:"category"`
+	ParrentId string         `json:"parrent_id"`
+	CreatedAt utils.JSONTime `json:"created_at"  gorm:"-"`
+	UpdatedAt utils.JSONTime `json:"updated_at"  gorm:"-"`
+}
+
+type CostCategoryListObject struct {
+	PageSize   int                   `json:"page_size"`
+	PageNo     int                   `json:"page_no"`
+	TotalCount int                   `json:"total_count"`
+	TotalPage  int                   `json:"total_page"`
+	Data       *[]CostCategoryObject `json:"data"`
+}

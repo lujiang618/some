@@ -1,5 +1,7 @@
 package models
 
+import "some/api/application/objects/response"
+
 type WealthCostCategory struct {
 	DetailColumns []string
 	BaseModel
@@ -13,9 +15,9 @@ func NewWealthCostCategory() *WealthCostCategory {
 	return category
 }
 
-func (m *WealthCostCategory) GetList(userId int) (*[]WealthCostCategory, error) {
-	categories := make([]WealthCostCategory, 0)
+func (m *WealthCostCategory) GetList(userId int) (*[]response.CostCategoryObject, int, error) {
+	categories := make([]response.CostCategoryObject, 0)
 	err := m.Db().Where("user_id = ?", userId).Find(&categories).Error
 
-	return &categories, err
+	return &categories, 100, err
 }

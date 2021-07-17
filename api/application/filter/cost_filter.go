@@ -7,6 +7,7 @@ import (
 	"some/api/pkg/api"
 	"some/api/pkg/api/code"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,13 +22,14 @@ func NewCostDetail() *CostDetail {
 	}
 }
 
-func (f CostDetail) GetList(c *gin.Context) (*[]response.CostDetailObject, *api.Error) {
+func (f CostDetail) GetList(c *gin.Context) (*response.CostListObject, *api.Error) {
 	params := &request.CostParamList{}
 
-	if err := c.ShouldBindUri(params); err != nil {
-
+	if err := c.ShouldBindQuery(params); err != nil {
 		return nil, api.NewError(code.ErrorRequest, err.Error())
 	}
+
+	spew.Dump(params)
 
 	// 调用service对应的方法
 	data, err := f.service.GetList(params)
@@ -61,4 +63,19 @@ func (f CostDetail) Create(c *gin.Context) *api.Error {
 	err := f.service.Create(params)
 
 	return err
+}
+
+func (f CostDetail) GetCategoryList(c *gin.Context) (*response.CostCategoryListObject, *api.Error) {
+	params := &request.CostParamList{}
+
+	if err := c.ShouldBindQuery(params); err != nil {
+		return nil, api.NewError(code.ErrorRequest, err.Error())
+	}
+
+	spew.Dump(params)
+
+	// 调用service对应的方法
+	data, err := f.service.GetCategoryList(params)
+
+	return data, err
 }

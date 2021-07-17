@@ -5,34 +5,34 @@ import (
 	"some/api/application/objects/response"
 )
 
-type CostDetail struct {
+type WealthCostDetail struct {
 	DetailColumns []string
 	BaseModel
 }
 
-func NewCostDetail() *CostDetail {
-	detail := &CostDetail{}
+func NewWealthCostDetail() *WealthCostDetail {
+	detail := &WealthCostDetail{}
 
-	detail.SetTableName("wealth_Cost_statistics_months")
+	detail.SetTableName("wealth_cost_details")
 
 	return detail
 }
 
-func (m *CostDetail) GetList(userId int) (*[]response.CostDetailObject, error) {
+func (m *WealthCostDetail) GetList(userId int) (*[]response.CostDetailObject, int, error) {
 	details := make([]response.CostDetailObject, 0)
 	err := m.Db().Where("user_id = ?", userId).Find(&details).Error
 
-	return &details, err
+	return &details, 100, err
 }
 
-func (m *CostDetail) GetDetail(id int) (*response.CostDetailObject, error) {
+func (m *WealthCostDetail) GetDetail(id int) (*response.CostDetailObject, error) {
 	detail := &response.CostDetailObject{}
 	err := m.Db().Where("id = ?", id).First(detail).Error
 
 	return detail, err
 }
 
-func (m *CostDetail) Create(params *request.CostParamCreate) error {
+func (m *WealthCostDetail) Create(params *request.CostParamCreate) error {
 	detail := &response.CostDetailObject{
 		UserId:      params.UserId,
 		Category:    params.Category,

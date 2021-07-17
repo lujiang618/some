@@ -24,6 +24,13 @@ func CreateApiRouter() {
 	// 	v1Auth.GET("/forget", controller2.NewAuth().Forget)      // 忘记密码
 	// }
 
+	// 登录认证API路由配置
+	v1Auth := Router.Group("/v1/w/c")
+	{
+		v1Auth.GET("/cost", controllers.NewCostController().GetList)                      // 支出列表
+		v1Auth.GET("/cost/categories", controllers.NewCostController().GetCostCategories) // 支出列表
+	}
+
 	// 系统API路由配置
 	system := Router.Group("/system").Use(middleware.VerifyAuth())
 	{
