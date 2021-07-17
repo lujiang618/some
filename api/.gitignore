@@ -1,0 +1,12 @@
+
+.idea
+.vscode
+
+api.exe
+api.exe~
+
+config/loacl.yaml
+
+runtime/logs/*
+
+static/app/*
