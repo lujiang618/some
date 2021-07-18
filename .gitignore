@@ -3,6 +3,5 @@
 .idea
 .vscode
 
-
-./api/config/local.yaml
-./web/node_modules/
+api/config/local.yaml
+web/node_modules
