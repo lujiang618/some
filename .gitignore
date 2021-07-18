@@ -1,6 +1,7 @@
 
 
 .idea
+.vscode
 
 
 ./api/config/local.yaml

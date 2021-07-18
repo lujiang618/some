@@ -1,0 +1,51 @@
+database:
+  type: "mysql"
+  host: "127.0.0.1"
+  port: 3306
+  user: "root"
+  password: "111111"
+  name: "some"
+  tablePrefix: ""
+
+redis:
+  host: "127.0.0.1:6379"
+  db: 1
+  password: "102redis"
+  maxIdle: 20
+  maxActive: 10
+  idleTimeout: 5000000000
+  maxRetries: 3
+
+mongo:
+  host: 10.32.5.33:27018
+  database: app
+  idleTimeout: 1000000000
+
+server:
+  runMode: "debug"
+  BaseUrl: "http://127.0.0.1"
+  httpPort: 8803
+  readTimeout: 2000000000
+  writeTimeout: 5000000000
+  closeTimeout: 3000000000
+
+# 系统相关配置
+system:
+  pageSize: "20"
+  prefixUrl: "1111"
+  runtimeRootPath: ""
+  appSaveRootPath: "static/app/"
+  imagePath: ""
+  imageMaxSize: 100
+  inageAllowExt:
+    - "jpg"
+    - "gif"
+    - "png"
+    - "webp"
+
+  exportPath: ""
+  qrCodePath: "static/app/"
+
+  logPath: "runtime/logs/gin.log"
+  logName: ""
+  logFileExt: ""
