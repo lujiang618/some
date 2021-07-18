@@ -9,5 +9,7 @@ api.exe~
 config/loacl.yaml
 
 runtime/logs/*
-
 static/app/*
+
+
+__debug_bin
