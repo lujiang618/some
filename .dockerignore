@@ -5,7 +5,7 @@
 
 **/.git/
 
-
+./api/config/local.yaml
 ./api/runtime/cache/*
 ./api/runtime/logs/*
 ./web/vue/node_modules

@@ -3,5 +3,5 @@
 .idea
 
 
-
+./api/config/local.yaml
 ./web/node_modules/
