@@ -66,6 +66,18 @@ yarn run lint
 + src/store/modules 目录增加文件
 + src/store/index.js import新增的内容
 
+使用时： 
+```
+import { mapActions } from 'vuex'
+
+...mapActions(['CostCategories', 'CreateCost', 'UpdateCost']),  # methods第一条
+
+const { form: { validateFields }, UpdateCost, CreateCost } = this # 执行的方法中
+
+```
+
+
+
 
 ### 资料
 - [preview.pro.antdv.com](https://preview.pro.antdv.com/)

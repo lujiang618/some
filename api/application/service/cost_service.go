@@ -52,6 +52,16 @@ func (s *CostService) Create(params *request.CostParamCreate) *api.Error {
 	return nil
 }
 
+func (s *CostService) Update(params *request.CostParamUpdate) *api.Error {
+
+	err := models.NewWealthCostDetail().Update(params)
+	if err != nil {
+		return api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	return nil
+}
+
 func (s *CostService) GetCategoryList(params *request.CostParamList) (*response.CostCategoryListObject, *api.Error) {
 
 	data, count, err := models.NewWealthCostCategory().GetList(int(params.UserId))

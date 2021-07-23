@@ -10,8 +10,6 @@ const api = {
   orgTree: '/v1/org/tree'
 }
 
-export default api
-
 export function getUserList (parameter) {
   return request({
     url: api.user,
@@ -44,24 +42,22 @@ export function getCostCategories (parameter) {
   })
 }
 
-export function getPermissions (parameter) {
+export function createCost (parameter) {
   return request({
-    url: api.permissionNoPager,
-    method: 'get',
+    url: api.cost,
+    method: 'post',
     params: parameter
   })
 }
 
-export function getOrgTree (parameter) {
+export function updateCost (parameter) {
   return request({
     url: api.orgTree,
-    method: 'get',
+    method: 'put',
     params: parameter
   })
 }
 
-// id == 0 add     post
-// id != 0 update  put
 export function saveService (parameter) {
   return request({
     url: api.service,

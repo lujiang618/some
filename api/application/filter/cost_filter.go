@@ -65,6 +65,20 @@ func (f CostDetail) Create(c *gin.Context) *api.Error {
 	return err
 }
 
+func (f CostDetail) Update(c *gin.Context) *api.Error {
+	params := &request.CostParamUpdate{}
+
+	if err := c.ShouldBindUri(params); err != nil {
+
+		return api.NewError(code.ErrorRequest, err.Error())
+	}
+
+	// 调用service对应的方法
+	err := f.service.Update(params)
+
+	return err
+}
+
 func (f CostDetail) GetCategoryList(c *gin.Context) (*response.CostCategoryListObject, *api.Error) {
 	params := &request.CostParamList{}
 

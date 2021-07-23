@@ -40,11 +40,7 @@
         hasFeedback
         validateStatus="warning"
       >
-        <a-select v-decorator="['content', {rules: [{ required: true, message: '请选择状态' }], initialValue: '1'}]">
-          <a-select-option v-for="item in categories" :key="item.id" >
-            {{ item.name }}
-          </a-select-option>
-        </a-select>
+        <a-input placeholder="内容" v-decorator="[ 'content', {rules: [{ required: true, message: '请输入内容' }]} ]" :disabled="true"></a-input>
       </a-form-item>
 
       <a-form-item
@@ -54,7 +50,7 @@
         hasFeedback
         help="请填写一段描述"
       >
-        <a-textarea :rows="5" placeholder="..." v-decorator="['金额', {rules: [{ required: true }]}]" />
+        <a-textarea :rows="5" placeholder="..." v-decorator="['amount', {rules: [{ required: true }]}]" />
       </a-form-item>
 
       <a-form-item
@@ -64,13 +60,7 @@
         hasFeedback
         validateStatus="error"
       >
-        <a-date-picker
-          style="width: 100%"
-          showTime
-          format="YYYY-MM-DD HH:mm:ss"
-          placeholder="Select Time"
-          v-decorator="['description']"
-        />
+        <a-textarea :rows="5" placeholder="..." v-decorator="['description', {rules: [{ required: true }]}]" />
       </a-form-item>
 
       <a-form-item
@@ -128,9 +118,9 @@ export default {
       id: 0
     }
   },
-  // beforeCreate () {
-  //   this.form = this.$form.createForm(this)
-  // },
+  beforeCreate () {
+    this.form = this.$form.createForm(this)
+  },
   created () {
     this.getCategories()
   },
@@ -140,8 +130,8 @@ export default {
     })
   },
   methods: {
+    ...mapActions(['CostCategories', 'CreateCost', 'UpdateCost']),
     moment,
-    ...mapActions(['CostCategories']),
     getCurrentData () {
       return new Date().toLocaleDateString()
     },
@@ -149,13 +139,29 @@ export default {
       this.$emit('onGoBack')
     },
     handleSubmit () {
-      const { form: { validateFields } } = this
+      const { form: { validateFields }, UpdateCost, CreateCost } = this
+      this.visible = true
       validateFields((err, values) => {
         if (!err) {
-          // eslint-disable-next-line no-console
           console.log('Received values of form: ', values)
+           if (this.record.id > 0) {
+            UpdateCost(values)
+              .then((res) => this.success(res))
+              .catch(err => this.failed(err))
+          } else {
+            CreateCost(values)
+              .then((res) => this.success(res))
+              .catch(err => this.failed(err))
+          }
+        } else {
+          this.visible = false
         }
       })
+      if (this.visible) {
+        return new Promise(resolve => {
+          resolve(true)
+        })
+      }
     },
     handleGetInfo () {
 
@@ -182,6 +188,12 @@ export default {
       }).catch((err) => {
         console.log('category list', err)
       })
+    },
+    success (res) {
+      console.log(res)
+    },
+    failed (err) {
+      console.log(err)
     }
   }
 }

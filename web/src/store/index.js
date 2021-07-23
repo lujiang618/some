@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 import app from './modules/app'
 import user from './modules/user'
-import team from './modules/wealth'
+import wealth from './modules/wealth'
 import apps from './modules/apps'
 import version from './modules/version'
 
@@ -20,7 +20,7 @@ export default new Vuex.Store({
   modules: {
     app,
     user,
-    team,
+    wealth,
     apps,
     version,
     permission

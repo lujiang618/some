@@ -44,3 +44,16 @@ func (m *WealthCostDetail) Create(params *request.CostParamCreate) error {
 
 	return m.Db().Create(detail).Error
 }
+
+func (m *WealthCostDetail) Update(params *request.CostParamUpdate) error {
+	detail := &response.CostDetailObject{
+		UserId:      params.UserId,
+		Category:    params.Category,
+		OccurDate:   params.OccurDate,
+		Content:     params.Content,
+		Amount:      params.Amount,
+		Description: params.Description,
+	}
+
+	return m.Db().Updates(detail).Where("id = ?", params.Id).Error
+}

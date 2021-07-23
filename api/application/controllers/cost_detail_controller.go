@@ -49,6 +49,15 @@ func (ctl *CostController) Create(c *gin.Context) {
 	api.SetResponse(c, http.StatusOK, code.Success, "")
 }
 
+func (ctl *CostController) Update(c *gin.Context) {
+	if err := ctl.paramFilter.Update(c); err != nil {
+		api.SetResponse(c, http.StatusOK, err.Code, err.Message)
+		return
+	}
+
+	api.SetResponse(c, http.StatusOK, code.Success, "")
+}
+
 func (ctl *CostController) GetCostCategories(c *gin.Context) {
 	data, err := ctl.paramFilter.GetCategoryList(c)
 	if err != nil {
