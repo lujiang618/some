@@ -24,9 +24,9 @@ type CostListObject struct {
 
 type CostCategoryObject struct {
 	Id        int            `json:"id" gorm:"primary_key"`
-	Name      uint64         `json:"name"`
+	Name      string         `json:"name"`
 	UserId    int            `json:"category"`
-	ParrentId string         `json:"parrent_id"`
+	ParrentId int            `json:"parrent_id"`
 	CreatedAt utils.JSONTime `json:"created_at"  gorm:"-"`
 	UpdatedAt utils.JSONTime `json:"updated_at"  gorm:"-"`
 }

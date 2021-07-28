@@ -1,7 +1,6 @@
 <template>
   <div>
     <a-form :form="form" @submit="handleSubmit">
-
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
@@ -14,7 +13,8 @@
           showTime
           format="YYYY-MM-DD"
           placeholder="Select Time"
-          v-decorator="['occur_date']"
+          @onChange="dateChange"
+          getFieldDecorator="['occur_date', {rules: [{ required: true, message: '请选择日期' }]}]"
           :defaultValue="moment(getCurrentData(), 'YYYY-MM-DD')"
         />
       </a-form-item>
@@ -26,7 +26,7 @@
         hasFeedback
         validateStatus="success"
       >
-        <a-select v-decorator="['category', {rules: [{ required: true, message: '请选择类别' }], initialValue: '1'}]">
+        <a-select v-decorator="['category', {rules: [{ required: true, message: '请选择类别' }]}]">
           <a-select-option v-for="item in categories" :key="item.id" >
             {{ item.name }}
           </a-select-option>
@@ -40,7 +40,7 @@
         hasFeedback
         validateStatus="warning"
       >
-        <a-input placeholder="内容" v-decorator="[ 'content', {rules: [{ required: true, message: '请输入内容' }]} ]" :disabled="true"></a-input>
+        <a-input placeholder="内容" v-decorator="[ 'content', {rules: [{ required: true, message: '请输入内容' }]} ]"></a-input>
       </a-form-item>
 
       <a-form-item
@@ -50,7 +50,7 @@
         hasFeedback
         help="请填写一段描述"
       >
-        <a-textarea :rows="5" placeholder="..." v-decorator="['amount', {rules: [{ required: true }]}]" />
+        <a-input placeholder="金额" v-decorator="[ 'amount', {rules: [{ required: true, message: '请输入金额' }]} ]"></a-input>
       </a-form-item>
 
       <a-form-item
@@ -68,7 +68,7 @@
       >
         <a-row>
           <a-col span="6">
-            <a-button type="primary" html-type="submit">提交</a-button>
+            <a-button type="primary" @click="handleSubmit">提交</a-button>
           </a-col>
           <a-col span="10">
             <a-button @click="handleGoBack">返回</a-button>
@@ -135,6 +135,11 @@ export default {
     getCurrentData () {
       return new Date().toLocaleDateString()
     },
+    dateChange (value, dateString) {
+      this.setState({
+          date: dateString
+        })
+    },
     handleGoBack () {
       this.$emit('onGoBack')
     },
@@ -143,25 +148,26 @@ export default {
       this.visible = true
       validateFields((err, values) => {
         if (!err) {
+          values.user_id = 1
+          values.occur_date = moment(values.occur_date).format('YYYY-MM-DD')
           console.log('Received values of form: ', values)
-           if (this.record.id > 0) {
-            UpdateCost(values)
-              .then((res) => this.success(res))
-              .catch(err => this.failed(err))
+          if (this.record.id > 0) {
+          UpdateCost(values)
+            .then((res) => this.success(res))
+            .catch(err => this.failed(err))
           } else {
             CreateCost(values)
               .then((res) => this.success(res))
               .catch(err => this.failed(err))
           }
-        } else {
           this.visible = false
         }
       })
-      if (this.visible) {
-        return new Promise(resolve => {
-          resolve(true)
-        })
-      }
+      // if (this.visible) {
+      //   return new Promise(resolve => {
+      //     resolve(true)
+      //   })
+      // }
     },
     handleGetInfo () {
 
@@ -181,7 +187,9 @@ export default {
     },
     getCategories () {
       const { CostCategories } = this
-      CostCategories().then(res => {
+      var parameter = {}
+      parameter.user_id = 1
+      CostCategories(parameter).then(res => {
         if (res.result.data.length > 0) {
           this.categories = res.result.data
         }

@@ -149,13 +149,13 @@ export default {
           title: '内容',
           dataIndex: 'content',
           sorter: true,
-          needTotal: true,
-          customRender: (text) => text + ' 次'
+          needTotal: true
         },
         {
           title: '金额',
           dataIndex: 'amount',
-          needTotal: true
+          needTotal: true,
+          customRender: (text) => text + ' 元'
         },
         {
           title: '备注',

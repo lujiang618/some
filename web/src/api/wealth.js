@@ -46,7 +46,7 @@ export function createCost (parameter) {
   return request({
     url: api.cost,
     method: 'post',
-    params: parameter
+    data: parameter
   })
 }
 

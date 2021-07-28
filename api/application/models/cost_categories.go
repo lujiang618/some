@@ -10,7 +10,7 @@ type WealthCostCategory struct {
 func NewWealthCostCategory() *WealthCostCategory {
 	category := &WealthCostCategory{}
 
-	category.SetTableName("wealth_cost_details")
+	category.SetTableName("wealth_cost_categories")
 
 	return category
 }
