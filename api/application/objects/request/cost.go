@@ -2,8 +2,22 @@ package request
 
 import "some/api/pkg/utils"
 
+/**
+pageNo: 1
+pageSize: 10
+user_id: 1
+occur_date: 2021-07-30
+sortField: amount
+sortOrder: ascend
+
+**/
 type CostParamList struct {
-	UserId uint64 `json:"user_id" form:"user_id"`
+	UserId    uint64 `json:"user_id" form:"user_id"`
+	PageNo    int    `json:"pageNo" form:"pageNo"`
+	PageSize  int    `json:"pageSize" form:"pageSize"`
+	OccurDate string `json:"occur_date" form:"occur_date"`
+	SortField string `json:"sortField" form:"sortField"`
+	SortOrder string `json:"sortOrder" form:"sortOrder"`
 }
 
 type CostParamDetail struct {

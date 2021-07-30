@@ -120,31 +120,6 @@ import moment from 'moment'
 import { STable } from '@/components'
 import { getRoleList, getCostList } from '@/api/wealth'
 
-const myData = [
-  {
-    occur_date: '1',
-    category_name: 'John Brown',
-    content: 32,
-    amount: 'New York No. 1 Lake Park',
-    description: ['nice', 'developer'],
-    editable: false
-  },
-  {
-    occur_date: '2',
-    category_name: 'Jim Green',
-    content: 42,
-    amount: 'London No. 1 Lake Park',
-    description: ['loser']
-  },
-  {
-    occur_date: '3',
-    category_name: 'Joe Black',
-    content: 32,
-    amount: 'Sidney No. 1 Lake Park',
-    description: ['cool', 'teacher']
-  }
-]
-
 export default {
   name: 'TableList',
   components: {
@@ -205,13 +180,7 @@ export default {
               item.editable = true
             })
             console.log('data is :', res.result.data)
-            return {
-              pageSize: res.result.page_size,
-              pageNo: res.result.page_no,
-              totalCount: res.result.total_count,
-              totalPage: res.result.total_page,
-              data: myData
-            }
+            return res.result
           })
       },
       selectedRowKeys: [],

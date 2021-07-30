@@ -55,7 +55,6 @@ func (f CostDetail) Create(c *gin.Context) *api.Error {
 	params := &request.CostParamCreate{}
 
 	if err := c.ShouldBindJSON(params); err != nil {
-
 		return api.NewError(code.ErrorRequest, err.Error())
 	}
 

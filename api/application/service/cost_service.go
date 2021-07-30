@@ -17,7 +17,7 @@ func NewCostService() *CostService {
 
 func (s *CostService) GetList(params *request.CostParamList) (*response.CostListObject, *api.Error) {
 
-	data, count, err := models.NewWealthCostDetail().GetList(int(params.UserId))
+	data, count, err := models.NewWealthCostDetail().GetList(params)
 	if err != nil {
 		return nil, api.NewError(code.ErrorDatabase, err.Error())
 	}

@@ -47,45 +47,16 @@ export const asyncRouterMap = [
         name: '/wealth',
         component: RouteView,
         meta: { title: '账簿', icon: 'table', keepAlive: true, permission: [ 'table' ] },
-        redirect: '/app/index',
+        redirect: '/wealth/index',
         hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
         children: [
           {
-            path: '/app/index',
-            name: 'AppIndex',
+            path: '/wealth/index',
+            name: 'CostIndex',
             hidden: true,
-            component: () => import('@/views/wealth/QueryList'),
+            component: () => import('@/views/wealth/TableList'),
             meta: { title: '记账簿', keepAlive: true, hidden: true, permission: [ 'table' ] }
           }
-          // {
-          //   path: '/app/info',
-          //   name: 'AppInfo',
-          //   hidden: true,
-          //   component: () => import('@/views/app/search/SearchLayout'),
-          //   redirect: '/app/search/detail',
-          //   meta: { title: '应用详情', keepAlive: true, hidden: true, permission: [ 'table' ] },
-          //   hideChildrenInMenu: true,
-          //   children: [
-          //     {
-          //       path: '/app/search/detail',
-          //       name: 'AppDetail',
-          //       component: () => import('../views/app/search/Detail'),
-          //       meta: { title: '应用概述', permission: [ 'table' ] }
-          //     },
-          //     {
-          //       path: '/app/search/version',
-          //       name: 'AppVersion',
-          //       component: () => import('../views/app/search/Version'),
-          //       meta: { title: '版本列表', permission: [ 'table' ] }
-          //     },
-          //     {
-          //       path: '/app/search/team',
-          //       name: 'AppTeam',
-          //       component: () => import('../views/app/search/Team'),
-          //       meta: { title: '团队', permission: [ 'table' ] }
-          //     }
-          //   ]
-          // }
         ]
       },
       // profile
