@@ -21,3 +21,25 @@ func (m *WealthCostCategory) GetList(userId int) (*[]response.CostCategoryObject
 
 	return &categories, 100, err
 }
+
+func (m *WealthCostCategory) GetCategoriesByIds(ids []int) (*[]response.CostCategoryObject, error) {
+	categories := make([]response.CostCategoryObject, 0)
+	err := m.Db().Where("id in (?)", ids).Find(&categories).Error
+
+	return &categories, err
+}
+
+func (m *WealthCostCategory) GetCategoryMap(ids []int) (map[int]string, error) {
+	result := make(map[int]string)
+
+	categories, err := m.GetCategoriesByIds(ids)
+	if err != nil {
+		return result, err
+	}
+
+	for _, category := range *categories {
+		result[category.Id] = category.Name
+	}
+
+	return result, nil
+}

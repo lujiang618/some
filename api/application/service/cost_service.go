@@ -22,6 +22,7 @@ func (s *CostService) GetList(params *request.CostParamList) (*response.CostList
 		return nil, api.NewError(code.ErrorDatabase, err.Error())
 	}
 
+	s.ApplyCategorys(data)
 	result := &response.CostListObject{
 		PageSize:   10,
 		PageNo:     1,
@@ -32,6 +33,25 @@ func (s *CostService) GetList(params *request.CostParamList) (*response.CostList
 	return result, nil
 }
 
+func (s *CostService) ApplyCategorys(rows *[]response.CostDetailObject) error {
+	var categoryIds = make([]int, 0, len(*rows))
+
+	for _, row := range *rows {
+		categoryIds = append(categoryIds, row.CategoryId)
+	}
+
+	categoryObj := models.NewWealthCostCategory()
+	categoryMap, err := categoryObj.GetCategoryMap(categoryIds)
+	if err != nil {
+		return err
+	}
+
+	for k, row := range *rows {
+		(*rows)[k].CategoryName = categoryMap[row.CategoryId]
+	}
+
+	return nil
+}
 func (s *CostService) GetDetail(params *request.CostParamDetail) (*response.CostDetailObject, *api.Error) {
 
 	data, err := models.NewWealthCostDetail().GetDetail(params.Id)

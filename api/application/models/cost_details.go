@@ -33,9 +33,10 @@ func (m *WealthCostDetail) GetDetail(id int) (*response.CostDetailObject, error)
 }
 
 func (m *WealthCostDetail) Create(params *request.CostParamCreate) error {
+
 	detail := &response.CostDetailObject{
 		UserId:      params.UserId,
-		Category:    params.Category,
+		CategoryId:  params.CategoryId,
 		OccurDate:   params.OccurDate,
 		Content:     params.Content,
 		Amount:      params.Amount,
@@ -48,7 +49,7 @@ func (m *WealthCostDetail) Create(params *request.CostParamCreate) error {
 func (m *WealthCostDetail) Update(params *request.CostParamUpdate) error {
 	detail := &response.CostDetailObject{
 		UserId:      params.UserId,
-		Category:    params.Category,
+		CategoryId:  params.CategoryId,
 		OccurDate:   params.OccurDate,
 		Content:     params.Content,
 		Amount:      params.Amount,

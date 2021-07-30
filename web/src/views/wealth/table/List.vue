@@ -84,6 +84,7 @@
       :data="loadData"
       :alert="options.alert"
       :rowSelection="options.rowSelection"
+      showPagination="auto"
     >
       <span slot="serial" slot-scope="text, record, index">
         {{ index + 1 }}
@@ -119,6 +120,31 @@ import moment from 'moment'
 import { STable } from '@/components'
 import { getRoleList, getCostList } from '@/api/wealth'
 
+const myData = [
+  {
+    occur_date: '1',
+    category_name: 'John Brown',
+    content: 32,
+    amount: 'New York No. 1 Lake Park',
+    description: ['nice', 'developer'],
+    editable: false
+  },
+  {
+    occur_date: '2',
+    category_name: 'Jim Green',
+    content: 42,
+    amount: 'London No. 1 Lake Park',
+    description: ['loser']
+  },
+  {
+    occur_date: '3',
+    category_name: 'Joe Black',
+    content: 32,
+    amount: 'Sidney No. 1 Lake Park',
+    description: ['cool', 'teacher']
+  }
+]
+
 export default {
   name: 'TableList',
   components: {
@@ -143,7 +169,7 @@ export default {
         },
         {
           title: '类别',
-          dataIndex: 'category'
+          dataIndex: 'category_name'
         },
         {
           title: '内容',
@@ -164,7 +190,7 @@ export default {
         },
         {
           title: '操作',
-          dataIndex: 'action',
+          key: 'action',
           width: '150px',
           scopedSlots: { customRender: 'action' }
         }
@@ -175,12 +201,16 @@ export default {
         console.log('loadData.parameter', parameter)
         return getCostList(Object.assign(parameter, this.queryParam))
           .then(res => {
+            res.result.data.forEach(item => {
+              item.editable = true
+            })
+            console.log('data is :', res.result.data)
             return {
               pageSize: res.result.page_size,
               pageNo: res.result.page_no,
               totalCount: res.result.total_count,
               totalPage: res.result.total_page,
-              data: res.result.data
+              data: myData
             }
           })
       },
