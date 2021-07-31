@@ -1,34 +1,36 @@
 <template>
   <page-header-wrapper>
-    <a-card :bordered="false">
+    <a-card style="margin-top: 24px" :bordered="false" title="支出列表">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="调用次数">
-                <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
+            <a-col :md="4" :sm="10">
+              <a-form-item label="类别">
+                <a-select v-model="queryParam.category_id" placeholder="请选择" default-value="0">
+                  <a-select-option v-for="item in categories" :key="item.id" >
+                    {{ item.name }}
+                  </a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
+            <a-col :md="8" :sm="20">
               <a-form-item label="日期" validateStatus="success">
-                <a-date-picker v-model="queryParam.occur_date" style="width: 100%" format="YYYY-MM-DD" placeholder="Select Time" :defaultValue="moment(getCurrentData(), 'YYYY-MM-DD')"/>
+                <a-date-picker v-model="queryParam.occur_date" style="width: 100%" format="YYYY-MM-DD" placeholder="Select Time"/>
               </a-form-item>
+            </a-col>
+            <a-col :md="4" :sm="14">
+              <a-form-item label="内容">
+                <a-input v-model="queryParam.content" placeholder=""/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="12">
+              <a-radio-group v-model="status">
+                <a-radio-button value="all">全部</a-radio-button>
+                <a-radio-button value="processing">进行中</a-radio-button>
+                <a-radio-button value="waiting">等待中</a-radio-button>
+              </a-radio-group>
             </a-col>
             <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="规则编号">
-                  <a-input v-model="queryParam.id" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
@@ -97,13 +99,28 @@
       />
       <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
+
+    <a-card :bordered="false">
+      <a-row>
+        <a-col :sm="8" :xs="24">
+          <info title="我的待办" value="8个任务" :bordered="true" />
+        </a-col>
+        <a-col :sm="8" :xs="24">
+          <info title="本周任务平均处理时间" value="32分钟" :bordered="true" />
+        </a-col>
+        <a-col :sm="8" :xs="24">
+          <info title="本周完成任务数" value="24个" />
+        </a-col>
+      </a-row>
+    </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
-import { getRoleList, getCostList } from '@/api/wealth'
+import { getCostCategories, getCostList } from '@/api/wealth'
+import Info from './components/Info'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
@@ -169,6 +186,7 @@ const statusMap = {
 export default {
   name: 'TableList',
   components: {
+    Info,
     STable,
     Ellipsis,
     CreateForm,
@@ -190,13 +208,16 @@ export default {
         parameter.user_id = 1
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         console.log('loadData request parameters:', requestParameters)
-        console.log('requestParameters.occur_date', requestParameters.occur_date)
-        requestParameters.occur_date = moment(requestParameters.occur_date).format('YYYY-MM-DD')
+        if (requestParameters.occur_date != null) {
+          requestParameters.occur_date = moment(requestParameters.occur_date).format('YYYY-MM-DD')
+        }
+
         return getCostList(requestParameters)
           .then(res => {
             return res.result
           })
       },
+      categories: [],
       selectedRowKeys: [],
       selectedRows: []
     }
@@ -210,7 +231,7 @@ export default {
     }
   },
   created () {
-    getRoleList({ t: new Date() })
+    this.getCategories()
   },
   computed: {
     rowSelection () {
@@ -223,9 +244,6 @@ export default {
   methods: {
     moment,
     ...mapActions(['CreateCost', 'UpdateCost']),
-    getCurrentData () {
-      return new Date().toLocaleDateString()
-    },
     handleAdd () {
       this.mdl = null
       this.visible = true
@@ -292,6 +310,17 @@ export default {
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    getCategories () {
+      var parameter = {}
+      parameter.user_id = 1
+      getCostCategories(parameter).then(res => {
+        if (res.result.data.length > 0) {
+          this.categories = res.result.data
+        }
+      }).catch((err) => {
+        console.log('category list', err)
+      })
     },
     resetSearchForm () {
       this.queryParam = {

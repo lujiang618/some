@@ -38,6 +38,14 @@ func (m *WealthCostDetail) GetList(params *request.CostParamList) (*[]response.C
 		query = query.Where("occur_date = ?", params.OccurDate)
 	}
 
+	if params.CategoryId > 0 {
+		query = query.Where("category_id = ?", params.CategoryId)
+	}
+
+	if params.Content != "" {
+		query = query.Where("content like ?", "%"+params.Content+"%")
+	}
+
 	orderType := "DESC"
 	if params.SortOrder == "ascend" {
 		orderType = "ASC"

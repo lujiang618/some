@@ -52,7 +52,7 @@ export function createCost (parameter) {
 
 export function updateCost (parameter) {
   return request({
-    url: api.orgTree,
+    url: api.cost,
     method: 'put',
     params: parameter
   })
