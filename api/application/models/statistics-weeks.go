@@ -1,5 +1,11 @@
 package models
 
+import (
+	"some/api/application/objects/response"
+
+	"github.com/davecgh/go-spew/spew"
+)
+
 type WealthStatisticsWeak struct {
 	DetailColumns []string
 	BaseModel
@@ -14,8 +20,13 @@ func NewWealthStatisticsWeak() *WealthStatisticsWeak {
 }
 
 func (m *WealthStatisticsWeak) GetTotal(userId uint64, startData, endDate string) (string, error) {
-	total := ""
-	err := m.Db().Select("sum(amount) total").Where("user_id = ? and start_date=? and end_date=?", userId, startData, endDate).Find(&total).Error
 
-	return total, err
+	var total response.StatTotal
+	err := m.Db().Select("sum(total) total").
+		Where("user_id = ? and start_date=? and end_date=?", userId, startData, endDate).
+		First(&total).Error
+
+	spew.Dump(total)
+
+	return total.Total, err
 }

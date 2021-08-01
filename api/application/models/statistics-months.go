@@ -1,5 +1,9 @@
 package models
 
+import (
+	"some/api/application/objects/response"
+)
+
 type WealthStatisticsMonth struct {
 	DetailColumns []string
 	BaseModel
@@ -14,8 +18,10 @@ func NewWealthStatisticsMonth() *WealthStatisticsMonth {
 }
 
 func (m *WealthStatisticsMonth) GetMonthTotal(userId uint64, yearMonth string) (string, error) {
-	total := ""
-	err := m.Db().Select("sum(amount) total").Where("user_id = ? and year_month = ?", userId, yearMonth).First(&total).Error
+	var total response.StatTotal
+	err := m.Db().
+		Select("sum(total) total").Where("user_id = ? and `year_month` = ?", userId, yearMonth).
+		First(&total).Error
 
-	return total, err
+	return total.Total, err
 }

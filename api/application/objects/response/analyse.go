@@ -32,3 +32,7 @@ type Stat struct {
 	CurrentWeek  string `json:"current_week"`
 	LastWeek     string `json:"last_week"`
 }
+
+type StatTotal struct {
+	Total string
+}
