@@ -13,9 +13,9 @@ func NewWealthStatisticsMonth() *WealthStatisticsMonth {
 	return statisticsMonth
 }
 
-func (m *WealthStatisticsMonth) GetList(userId int) (*[]WealthStatisticsMonth, error) {
-	statisticsMonth := make([]WealthStatisticsMonth, 0)
-	err := m.Db().Where("user_id = ?", userId).Find(&statisticsMonth).Error
+func (m *WealthStatisticsMonth) GetMonthTotal(userId uint64, yearMonth string) (string, error) {
+	total := ""
+	err := m.Db().Select("sum(amount) total").Where("user_id = ? and year_month = ?", userId, yearMonth).First(&total).Error
 
-	return &statisticsMonth, err
+	return total, err
 }

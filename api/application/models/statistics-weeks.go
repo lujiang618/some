@@ -13,9 +13,9 @@ func NewWealthStatisticsWeak() *WealthStatisticsWeak {
 	return statisticsWeak
 }
 
-func (m *WealthStatisticsWeak) GetList(userId int) (*[]WealthStatisticsWeak, error) {
-	statisticsWeek := make([]WealthStatisticsWeak, 0)
-	err := m.Db().Where("user_id = ?", userId).Find(&statisticsWeek).Error
+func (m *WealthStatisticsWeak) GetTotal(userId uint64, startData, endDate string) (string, error) {
+	total := ""
+	err := m.Db().Select("sum(amount) total").Where("user_id = ? and start_date=? and end_date=?", userId, startData, endDate).Find(&total).Error
 
-	return &statisticsWeek, err
+	return total, err
 }

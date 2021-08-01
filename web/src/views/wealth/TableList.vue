@@ -1,5 +1,18 @@
 <template>
   <page-header-wrapper>
+    <a-card :bordered="false">
+      <a-row>
+        <a-col :sm="8" :xs="24">
+          <info title="我的待办" value="8个任务" :bordered="true" />
+        </a-col>
+        <a-col :sm="8" :xs="24">
+          <info title="本周任务平均处理时间" value="32分钟" :bordered="true" />
+        </a-col>
+        <a-col :sm="8" :xs="24">
+          <info title="本周完成任务数" value="24个" />
+        </a-col>
+      </a-row>
+    </a-card>
     <a-card style="margin-top: 24px" :bordered="false" title="支出列表">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
@@ -32,14 +45,10 @@
             </a-col>
             <template v-if="advanced">
             </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
+            <a-col>
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
               </span>
             </a-col>
           </a-row>
@@ -100,19 +109,6 @@
       <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
 
-    <a-card :bordered="false">
-      <a-row>
-        <a-col :sm="8" :xs="24">
-          <info title="我的待办" value="8个任务" :bordered="true" />
-        </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周任务平均处理时间" value="32分钟" :bordered="true" />
-        </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周完成任务数" value="24个" />
-        </a-col>
-      </a-row>
-    </a-card>
   </page-header-wrapper>
 </template>
 

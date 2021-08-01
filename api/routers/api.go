@@ -25,13 +25,18 @@ func CreateApiRouter() {
 	// }
 
 	// 登录认证API路由配置
-	v1Auth := Router.Group("/v1/w/c")
+	v1Cost := Router.Group("/v1/w/c")
 	{
-		v1Auth.GET("/cost", controllers.NewCostController().GetList)                      // 支出列表
-		v1Auth.POST("/cost", controllers.NewCostController().Create)                      // 添加支持记录
-		v1Auth.PUT("/cost", controllers.NewCostController().Update)                       // 修改支持记录
-		v1Auth.GET("/cost/categories", controllers.NewCostController().GetCostCategories) // 支出分类
+		v1Cost.GET("/cost", controllers.NewCostController().GetList)                      // 支出列表
+		v1Cost.POST("/cost", controllers.NewCostController().Create)                      // 添加支持记录
+		v1Cost.PUT("/cost", controllers.NewCostController().Update)                       // 修改支持记录
+		v1Cost.GET("/cost/categories", controllers.NewCostController().GetCostCategories) // 支出分类
 
+	}
+
+	v1Analyse := Router.Group("/v1/w/a")
+	{
+		v1Analyse.GET("/all", controllers.NewAnalyseController().GetAll) // 支出列表
 	}
 
 	// 系统API路由配置
