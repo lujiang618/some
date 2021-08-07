@@ -67,7 +67,7 @@ func (f CostDetail) Create(c *gin.Context) *api.Error {
 func (f CostDetail) Update(c *gin.Context) *api.Error {
 	params := &request.CostParamUpdate{}
 
-	if err := c.ShouldBindUri(params); err != nil {
+	if err := c.ShouldBindJSON(params); err != nil {
 
 		return api.NewError(code.ErrorRequest, err.Error())
 	}

@@ -26,10 +26,51 @@
       </a-row>
     </a-card>
     <a-card style="margin-top: 24px" :bordered="false" title="支出列表">
+      <div slot="extra">
+        <a-radio-group v-model="status">
+          <a-radio-button value="all">全部</a-radio-button>
+          <a-radio-button value="processing">进行中</a-radio-button>
+          <a-radio-button value="waiting">等待中</a-radio-button>
+        </a-radio-group>
+      </div>
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="4" :sm="10">
+            <a-col :md="3" :sm="10">
+              <a-form-item label="年">
+                <a-select v-model="queryParam.year" placeholder="请选择" default-value="0">
+                  <a-select-option v-for="item in years" :key="item.value" >
+                    {{ item.label }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="3" :sm="10">
+              <a-form-item label="月">
+                <a-select v-model="queryParam.month" placeholder="请选择" default-value="0">
+                  <a-select-option v-for="item in months" :key="item.value" default-value="0">
+                    {{ item.label }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="5" :sm="20">
+              <a-form-item label="日期" validateStatus="success">
+                <a-range-picker v-model="queryParam.date_range" :format="dateFormat" :valueFormat="dateFormat">
+                  <template slot="dateRender" slot-scope="current">
+                    <div class="ant-calendar-date" :style="getCurrentStyle(current)">
+                      {{ current.date() }}
+                    </div>
+                  </template>
+                </a-range-picker>
+              </a-form-item>
+            </a-col>
+            <a-col :md="3" :sm="14">
+              <a-form-item label="内容">
+                <a-input v-model="queryParam.content" placeholder=""/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="3" :sm="10">
               <a-form-item label="类别">
                 <a-select v-model="queryParam.category_id" placeholder="请选择" default-value="0">
                   <a-select-option v-for="item in categories" :key="item.id" >
@@ -38,29 +79,16 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="20">
-              <a-form-item label="日期" validateStatus="success">
-                <a-date-picker v-model="queryParam.occur_date" style="width: 100%" format="YYYY-MM-DD" placeholder="Select Time"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="4" :sm="14">
-              <a-form-item label="内容">
-                <a-input v-model="queryParam.content" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="12">
-              <a-radio-group v-model="status">
-                <a-radio-button value="all">全部</a-radio-button>
-                <a-radio-button value="processing">进行中</a-radio-button>
-                <a-radio-button value="waiting">等待中</a-radio-button>
-              </a-radio-group>
-            </a-col>
             <template v-if="advanced">
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? '收起' : '展开' }}
+                  <a-icon :type="advanced ? 'up' : 'down'"/>
+                </a>
               </span>
             </a-col>
           </a-row>
@@ -204,6 +232,11 @@ export default {
   data () {
     this.columns = columns
     return {
+      yearsModel: null,
+      years: [],
+      monthsModel: null,
+      months: [],
+      dateFormat: 'YYYY-MM-DD',
       // create model
       visible: false,
       confirmLoading: false,
@@ -251,6 +284,7 @@ export default {
     }
   },
   created () {
+    this.init()
     this.getCategories()
     this.getAnalyse()
   },
@@ -352,13 +386,45 @@ export default {
         this.analyse.lastMonth = res.result.last_month
         this.analyse.lastWeek = res.result.last_week
         this.analyse.avgYear = res.result.avg_current_year
-        this.analyse.avgYearNoLoad = res.result.avg_current_week_no_load
+        this.analyse.avgYearNoLoad = res.result.avg_current_year_no_load
         this.analyse.avgWeek = res.result.avg_current_week
-        this.analyse.avgWeekNoLoad = res.result.avg_current_year_no_load
+        this.analyse.avgWeekNoLoad = res.result.avg_current_week_no_load
         this.analyse.TotalYear = res.result.total_year
       }).catch((err) => {
         console.log('category list', err)
       })
+    },
+    getCurrentStyle (current, today) {
+      const style = {}
+      if (current.date() === 1) {
+        style.border = '1px solid #1890ff'
+        style.borderRadius = '50%'
+      }
+      return style
+    },
+    init () {
+      var myDate = new Date()
+      var year = myDate.getFullYear() // 获取当前年
+      // var month = myDate.getMonth() + 1 // 获取当前月
+
+      this.initSelectYear(year)
+      this.initSelectMonth()
+      // this.queryParam.year = year
+      // this.queryParam.month = month
+    },
+    initSelectYear (year) {
+      this.years = []
+      this.years.push({ value: 0, label: '全部' })
+      for (let i = 0; i < 30; i++) {
+        this.years.push({ value: (year - i), label: (year - i) + '年' })
+      }
+    },
+    initSelectMonth () {
+      this.months = []
+      this.months.push({ value: 0, label: '全部' })
+        for (let i = 1; i <= 12; i++) {
+          this.months.push({ value: i, label: i + '月' })
+        }
     },
     resetSearchForm () {
       this.queryParam = {

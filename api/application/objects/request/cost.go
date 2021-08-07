@@ -12,14 +12,16 @@ sortOrder: ascend
 
 **/
 type CostParamList struct {
-	UserId     uint64 `json:"user_id" form:"user_id"`
-	Content    string `json:"content" form:"content"`
-	CategoryId int    `json:"category_id" form:"category_id"`
-	OccurDate  string `json:"occur_date" form:"occur_date"`
-	PageNo     int    `json:"pageNo" form:"pageNo"`
-	PageSize   int    `json:"pageSize" form:"pageSize"`
-	SortField  string `json:"sortField" form:"sortField"`
-	SortOrder  string `json:"sortOrder" form:"sortOrder"`
+	UserId     uint64   `json:"user_id" form:"user_id"`
+	Content    string   `json:"content" form:"content"`
+	Year       int      `json:"year" form:"year"`
+	Month      int      `json:"month" form:"month"`
+	CategoryId int      `json:"category_id" form:"category_id"`
+	DateRange  []string `json:"date_range" form:"date_range[]"`
+	PageNo     int      `json:"pageNo" form:"pageNo"`
+	PageSize   int      `json:"pageSize" form:"pageSize"`
+	SortField  string   `json:"sortField" form:"sortField"`
+	SortOrder  string   `json:"sortOrder" form:"sortOrder"`
 }
 
 type CostParamDetail struct {

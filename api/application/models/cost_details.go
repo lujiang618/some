@@ -10,6 +10,8 @@ type CostDetail struct {
 	Id          int            `json:"id" gorm:"primary_key"`
 	UserId      uint64         `json:"user_id"`
 	CategoryId  int            `json:"category_id"`
+	Year        int            `json:"year"`
+	Month       int            `json:"month"`
 	OccurDate   string         `json:"occur_date"`
 	Content     string         `json:"content"`
 	Amount      string         `json:"amount"`
@@ -34,8 +36,8 @@ func NewWealthCostDetail() *WealthCostDetail {
 func (m *WealthCostDetail) GetList(params *request.CostParamList) (*[]response.CostDetailObject, int, error) {
 	details := make([]response.CostDetailObject, 0)
 	query := m.Db().Where("user_id = ?", params.UserId)
-	if params.OccurDate != "" {
-		query = query.Where("occur_date = ?", params.OccurDate)
+	if len(params.DateRange) == 2 {
+		query = query.Where("occur_date between ? and ?", params.DateRange[0], params.DateRange[1])
 	}
 
 	if params.CategoryId > 0 {
@@ -44,6 +46,14 @@ func (m *WealthCostDetail) GetList(params *request.CostParamList) (*[]response.C
 
 	if params.Content != "" {
 		query = query.Where("content like ?", "%"+params.Content+"%")
+	}
+
+	if params.Year > 0 {
+		query = query.Where("year = ?", params.Year)
+	}
+
+	if params.Month > 0 {
+		query = query.Where("month = ?", params.Month)
 	}
 
 	orderType := "DESC"
@@ -128,9 +138,16 @@ func (m *WealthCostDetail) GetDetail(id int) (*response.CostDetailObject, error)
 }
 
 func (m *WealthCostDetail) Create(params *request.CostParamCreate) error {
+	year, month, err := utils.GetYearMonth(params.OccurDate.String())
+	if err != nil {
+		return err
+	}
+
 	detail := &CostDetail{
 		UserId:      params.UserId,
 		CategoryId:  params.CategoryId,
+		Year:        year,
+		Month:       month,
 		OccurDate:   params.OccurDate.String(),
 		Content:     params.Content,
 		Amount:      params.Amount,
@@ -141,14 +158,22 @@ func (m *WealthCostDetail) Create(params *request.CostParamCreate) error {
 }
 
 func (m *WealthCostDetail) Update(params *request.CostParamUpdate) error {
-	detail := &response.CostDetailObject{
+	detail := &CostDetail{
 		UserId:      params.UserId,
 		CategoryId:  params.CategoryId,
-		OccurDate:   params.OccurDate,
+		OccurDate:   params.OccurDate.String(),
 		Content:     params.Content,
 		Amount:      params.Amount,
 		Description: params.Description,
 	}
 
-	return m.Db().Updates(detail).Where("id = ?", params.Id).Error
+	tx := m.Db().Begin()
+	err := tx.Where("id = ?", params.Id).Updates(detail).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	return nil
 }

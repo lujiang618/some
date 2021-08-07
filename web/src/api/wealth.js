@@ -54,7 +54,7 @@ export function updateCost (parameter) {
   return request({
     url: api.cost,
     method: 'put',
-    params: parameter
+    data: parameter
   })
 }
 

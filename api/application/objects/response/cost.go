@@ -7,6 +7,8 @@ type CostDetailObject struct {
 	UserId       uint64         `json:"user_id"`
 	CategoryId   int            `json:"category_id"`
 	CategoryName string         `json:"category_name"`
+	Year         int            `json:"year"`
+	Month        int            `json:"month"`
 	OccurDate    utils.JsonDate `json:"occur_date"`
 	Content      string         `json:"content"`
 	Amount       string         `json:"amount"`

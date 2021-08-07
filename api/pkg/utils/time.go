@@ -99,3 +99,12 @@ func GetLastWeekScope() (string, string) {
 
 	return lastWeekMonday.Format(TimeStdDateFormat), lastEndDate.Format(TimeStdDateFormat)
 }
+
+func GetYearMonth(date string) (int, int, error) {
+	occurDate, err := time.Parse(TimeStdDateFormat, date)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return occurDate.Year(), int(occurDate.Month()), nil
+}
