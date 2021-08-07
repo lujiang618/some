@@ -27,12 +27,21 @@ type CostMonth struct {
 }
 
 type Stat struct {
-	CurrentMonth string `json:"current_month"`
-	LastMonth    string `json:"last_month"`
-	CurrentWeek  string `json:"current_week"`
-	LastWeek     string `json:"last_week"`
+	CurrentMonth         string `json:"current_month"`
+	LastMonth            string `json:"last_month"`
+	CurrentWeek          string `json:"current_week"`
+	LastWeek             string `json:"last_week"`
+	TotalYear            string `json:"total_year"`
+	AvgCurrentWeek       string `json:"avg_current_week"`
+	AvgCurrentWeekNoLoad string `json:"avg_current_week_no_load"`
+	AvgCurrentYear       string `json:"avg_current_year"`
+	AvgCurrentYearNoLoad string `json:"avg_current_year_no_load"`
 }
 
 type StatTotal struct {
 	Total string
+}
+
+type StatAvg struct {
+	Avg string
 }

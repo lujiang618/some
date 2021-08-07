@@ -25,7 +25,7 @@ func NewAnalyseFilter() *AnalyseFilter {
 func (f AnalyseFilter) GetAll(c *gin.Context) (*response.Stat, *api.Error) {
 	params := &request.AnalyseParamsAll{}
 
-	if err := c.ShouldBindQuery(params); err != nil {
+	if err := c.ShouldBindJSON(params); err != nil {
 		return nil, api.NewError(code.ErrorRequest, err.Error())
 	}
 

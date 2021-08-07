@@ -6,6 +6,7 @@ import user from './modules/user'
 import wealth from './modules/wealth'
 import apps from './modules/apps'
 import version from './modules/version'
+import analyse from './modules/analyse'
 
 // default router permission control
 import permission from './modules/permission'
@@ -21,6 +22,7 @@ export default new Vuex.Store({
     app,
     user,
     wealth,
+    analyse,
     apps,
     version,
     permission

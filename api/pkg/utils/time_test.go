@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"some/api/pkg/utils"
 	"testing"
+	"time"
 )
 
 func TestGetCurrentYearMonth(t *testing.T) {
@@ -25,4 +26,12 @@ func TestGetFirstDateOfWeek(t *testing.T) {
 func TestGetLastWeekScope(t *testing.T) {
 	first, end := utils.GetLastWeekScope()
 	fmt.Println("first:", first, end)
+}
+
+func TestGetWeekDay(t *testing.T) {
+	fmt.Println(utils.GetWeekDay(time.Now()))
+}
+
+func TestGetDayOfYear(t *testing.T) {
+	fmt.Println(utils.GetDayOfYear(time.Now()))
 }

@@ -24,13 +24,11 @@ func GetCurrentMonthScope() (string, string) {
 	return GetMonthScope(now)
 }
 
-func GetLastMonthStartEnd() (int64, int64) {
+func GetLastMonthScope() (time.Time, time.Time) {
 	now := time.Now()
 	lastMonthFirstDay := now.AddDate(0, -1, -now.Day()+1)
-	lastMonthStart := time.Date(lastMonthFirstDay.Year(), lastMonthFirstDay.Month(), lastMonthFirstDay.Day(), 0, 0, 0, 0, now.Location()).Unix()
 	lastMonthEndDay := lastMonthFirstDay.AddDate(0, 1, -1)
-	lastMonthEnd := time.Date(lastMonthEndDay.Year(), lastMonthEndDay.Month(), lastMonthEndDay.Day(), 23, 59, 59, 0, now.Location()).Unix()
-	return lastMonthStart, lastMonthEnd
+	return lastMonthFirstDay, lastMonthEndDay
 }
 
 func GetCurrentYearMonth() string {
@@ -42,6 +40,36 @@ func GetLastYearMonth() string {
 	now := time.Now()
 	lastMonth := now.AddDate(0, -1, -now.Day()+1)
 	return lastMonth.Format(TimeStdYMFormat)
+}
+
+func GetCurrentWeekDay() int {
+	return GetWeekDay(time.Now())
+}
+
+func GetWeekDay(date time.Time) int {
+	day := int(date.Weekday())
+	if day == 0 {
+		day = 7
+	}
+	return day
+}
+
+func GetCurrentDayOfYear() int {
+	return GetDayOfYear(time.Now())
+}
+
+func GetLastMonthDayOfYear() int {
+	_, dateEnd := GetLastMonthScope()
+
+	return GetDayOfYear(dateEnd)
+
+}
+func GetDayOfYear(date time.Time) int {
+	return date.YearDay()
+}
+
+func GetCurrentYear() int {
+	return time.Now().Year()
 }
 
 /**

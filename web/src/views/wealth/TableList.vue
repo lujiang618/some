@@ -2,14 +2,26 @@
   <page-header-wrapper>
     <a-card :bordered="false">
       <a-row>
-        <a-col :sm="8" :xs="24">
-          <info title="我的待办" value="8个任务" :bordered="true" />
+        <a-col :sm="3" :xs="20">
+          <info title="本年支出" :value="analyse.TotalYear" :bordered="true"/>
         </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周任务平均处理时间" value="32分钟" :bordered="true" />
+        <a-col :sm="3" :xs="20">
+          <info title="上月支出" :value="analyse.lastMonth" :bordered="true"/>
         </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周完成任务数" value="24个" />
+        <a-col :sm="3" :xs="20">
+          <info title="本月支出" :value="analyse.currentMonth" :bordered="true" />
+        </a-col>
+        <a-col :sm="3" :xs="240">
+          <info title="本周支出" :value="analyse.currentWeek" :bordered="true" />
+        </a-col>
+        <a-col :sm="3" :xs="20">
+          <info title="上周支出" :value="analyse.lastWeek" :bordered="true"/>
+        </a-col>
+        <a-col :sm="3" :xs="20">
+          <info title="本年日均" :value="analyse.avgYear + ' / ' + analyse.avgYearNoLoad" :bordered="true"/>
+        </a-col>
+        <a-col :sm="3" :xs="20">
+          <info title="本周日均" :value="analyse.avgWeek + ' / ' + analyse.avgWeekNoLoad" :bordered="true"/>
         </a-col>
       </a-row>
     </a-card>
@@ -45,7 +57,7 @@
             </a-col>
             <template v-if="advanced">
             </template>
-            <a-col>
+            <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
@@ -116,6 +128,7 @@
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
 import { getCostCategories, getCostList } from '@/api/wealth'
+import { getAnalyse } from '@/api/analyse'
 import Info from './components/Info'
 
 import StepByStepModal from './modules/StepByStepModal'
@@ -213,6 +226,17 @@ export default {
             return res.result
           })
       },
+      analyse: {
+        TotalYear: 0,
+        currentMonth: 0,
+        currentWeek: 0,
+        lastMonth: 0,
+        lastWeek: 0,
+        avgYear: 0,
+        avgYearNoLoad: 0,
+        avgWeek: 0,
+        avgWeekNoLoad: 0
+      },
       categories: [],
       selectedRowKeys: [],
       selectedRows: []
@@ -228,6 +252,7 @@ export default {
   },
   created () {
     this.getCategories()
+    this.getAnalyse()
   },
   computed: {
     rowSelection () {
@@ -314,6 +339,23 @@ export default {
         if (res.result.data.length > 0) {
           this.categories = res.result.data
         }
+      }).catch((err) => {
+        console.log('category list', err)
+      })
+    },
+    getAnalyse () {
+      var parameter = {}
+      parameter.user_id = 1
+      getAnalyse(parameter).then(res => {
+        this.analyse.currentMonth = res.result.current_month
+        this.analyse.currentWeek = res.result.current_week
+        this.analyse.lastMonth = res.result.last_month
+        this.analyse.lastWeek = res.result.last_week
+        this.analyse.avgYear = res.result.avg_current_year
+        this.analyse.avgYearNoLoad = res.result.avg_current_week_no_load
+        this.analyse.avgWeek = res.result.avg_current_week
+        this.analyse.avgWeekNoLoad = res.result.avg_current_year_no_load
+        this.analyse.TotalYear = res.result.total_year
       }).catch((err) => {
         console.log('category list', err)
       })

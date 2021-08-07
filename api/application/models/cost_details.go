@@ -68,6 +68,58 @@ func (m *WealthCostDetail) GetList(params *request.CostParamList) (*[]response.C
 	return &details, 100, err
 }
 
+func (m *WealthCostDetail) GetCurrentMonth(userId uint64) (string, error) {
+	dateStart, dateEnd := utils.GetCurrentMonthScope()
+
+	return m.GetTotalByDateScope(userId, dateStart, dateEnd)
+}
+
+func (m *WealthCostDetail) GetCurrentWeek(userId uint64) (string, error) {
+	dateStart, dateEnd := utils.GetCurrentWeekScope()
+
+	return m.GetTotalByDateScope(userId, dateStart, dateEnd)
+}
+
+func (m *WealthCostDetail) GetTotalByDateScope(userId uint64, dateStart, dateEnd string) (string, error) {
+	var total response.StatTotal
+	err := m.Db().Select("sum(amount) total").
+		Where("user_id = ? and occur_date between ? and ?", userId, dateStart, dateEnd).
+		First(&total).Error
+
+	return total.Total, err
+}
+
+func (m *WealthCostDetail) GetAvgCurrentMonth(userId uint64) (string, error) {
+	dateStart, dateEnd := utils.GetCurrentMonthScope()
+	return m.GetAvgByDateScope(userId, dateStart, dateEnd)
+}
+
+func (m *WealthCostDetail) GetAvgCurrentWeek(userId uint64) (string, error) {
+	dateStart, dateEnd := utils.GetCurrentWeekScope()
+	return m.GetAvgByDateScope(userId, dateStart, dateEnd)
+}
+
+func (m *WealthCostDetail) GetAvgByDateScope(userId uint64, dateStart, dateEnd string) (string, error) {
+	var avg response.StatAvg
+	err := m.Db().Select("round(sum(amount)/?) as avg", utils.GetCurrentWeekDay()).
+		Where("user_id = ? and occur_date between ? and ? ", userId, dateStart, dateEnd).
+		First(&avg).Error
+	return avg.Avg, err
+}
+
+func (m *WealthCostDetail) GetAvgCurrentWeekNoLoad(userId uint64) (string, error) {
+	dateStart, dateEnd := utils.GetCurrentWeekScope()
+	return m.GetAvgByDateScopeNoLoad(userId, dateStart, dateEnd)
+}
+
+func (m *WealthCostDetail) GetAvgByDateScopeNoLoad(userId uint64, dateStart, dateEnd string) (string, error) {
+	var avg response.StatAvg
+	err := m.Db().Select("round(sum(amount)/?) as avg", utils.GetCurrentWeekDay()).
+		Where("user_id = ? and occur_date between ? and ? and category_id <> ?", userId, dateStart, dateEnd, 11).
+		First(&avg).Error
+	return avg.Avg, err
+}
+
 func (m *WealthCostDetail) GetDetail(id int) (*response.CostDetailObject, error) {
 	detail := &response.CostDetailObject{}
 	err := m.Db().Where("id = ?", id).First(detail).Error

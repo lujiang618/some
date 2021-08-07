@@ -19,8 +19,7 @@
             showTime
             format="YYYY-MM-DD"
             placeholder="Select Time"
-            getFieldDecorator="['occur_date', {rules: [{ required: true, message: '请选择日期' }]}]"
-            :defaultValue="moment(getCurrentData(), 'YYYY-MM-DD')"
+            v-decorator="['occur_date', {rules: [{ required: true, message: '请选择日期' }]}]"
           />
         </a-form-item>
 

@@ -36,7 +36,7 @@ func CreateApiRouter() {
 
 	v1Analyse := Router.Group("/v1/w/a")
 	{
-		v1Analyse.GET("/all", controllers.NewAnalyseController().GetAll) // 支出列表
+		v1Analyse.POST("/analyse", controllers.NewAnalyseController().GetAll) // 支出列表
 	}
 
 	// 系统API路由配置
