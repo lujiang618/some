@@ -11,25 +11,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CostDetail struct {
+type CostFilter struct {
 	BaseFilter
 	service *service.CostService
 }
 
-func NewCostDetail() *CostDetail {
-	return &CostDetail{
+func NewCostFilter() *CostFilter {
+	return &CostFilter{
 		service: service.NewCostService(),
 	}
 }
 
-func (f CostDetail) GetList(c *gin.Context) (*response.CostListObject, *api.Error) {
+func (f CostFilter) GetList(c *gin.Context) (*response.CostListObject, *api.Error) {
 	params := &request.CostParamList{}
 
 	if err := c.ShouldBindQuery(params); err != nil {
 		return nil, api.NewError(code.ErrorRequest, err.Error())
 	}
-
-	spew.Dump(params)
 
 	// 调用service对应的方法
 	data, err := f.service.GetList(params)
@@ -37,7 +35,7 @@ func (f CostDetail) GetList(c *gin.Context) (*response.CostListObject, *api.Erro
 	return data, err
 }
 
-func (f CostDetail) GetDetail(c *gin.Context) (*response.CostDetailObject, *api.Error) {
+func (f CostFilter) GetDetail(c *gin.Context) (*response.CostDetailObject, *api.Error) {
 	params := &request.CostParamDetail{}
 
 	if err := c.ShouldBindUri(params); err != nil {
@@ -51,7 +49,7 @@ func (f CostDetail) GetDetail(c *gin.Context) (*response.CostDetailObject, *api.
 	return data, err
 }
 
-func (f CostDetail) Create(c *gin.Context) *api.Error {
+func (f CostFilter) Create(c *gin.Context) *api.Error {
 	params := &request.CostParamCreate{}
 
 	if err := c.ShouldBindJSON(params); err != nil {
@@ -64,7 +62,7 @@ func (f CostDetail) Create(c *gin.Context) *api.Error {
 	return err
 }
 
-func (f CostDetail) Update(c *gin.Context) *api.Error {
+func (f CostFilter) Update(c *gin.Context) *api.Error {
 	params := &request.CostParamUpdate{}
 
 	if err := c.ShouldBindJSON(params); err != nil {
@@ -78,7 +76,7 @@ func (f CostDetail) Update(c *gin.Context) *api.Error {
 	return err
 }
 
-func (f CostDetail) GetCategoryList(c *gin.Context) (*response.CostCategoryListObject, *api.Error) {
+func (f CostFilter) GetCategoryList(c *gin.Context) (*response.CostCategoryListObject, *api.Error) {
 	params := &request.CostParamList{}
 
 	if err := c.ShouldBindQuery(params); err != nil {

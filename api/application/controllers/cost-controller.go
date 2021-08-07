@@ -11,12 +11,12 @@ import (
 
 type CostController struct {
 	BaseController
-	paramFilter *filter.CostDetail
+	paramFilter *filter.CostFilter
 }
 
 func NewCostController() *CostController {
 	return &CostController{
-		paramFilter: filter.NewCostDetail(),
+		paramFilter: filter.NewCostFilter(),
 	}
 }
 

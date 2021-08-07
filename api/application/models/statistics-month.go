@@ -21,7 +21,7 @@ func NewWealthStatisticsMonth() *WealthStatisticsMonth {
 func (m *WealthStatisticsMonth) GetMonthTotal(userId uint64, yearMonth string) (string, error) {
 	var total response.StatTotal
 	err := m.Db().
-		Select("sum(total) total").Where("user_id = ? and `year_month` = ?", userId, yearMonth).
+		Select("round(sum(total)) total").Where("user_id = ? and `year_month` = ?", userId, yearMonth).
 		First(&total).Error
 
 	return total.Total, err
@@ -30,7 +30,7 @@ func (m *WealthStatisticsMonth) GetMonthTotal(userId uint64, yearMonth string) (
 func (m *WealthStatisticsMonth) GetYearTotal(userId uint64, year int) (string, error) {
 	var total response.StatTotal
 	err := m.Db().
-		Select("sum(total) total").Where("user_id = ? and `year` = ?", userId, year).
+		Select("round(sum(total)) total").Where("user_id = ? and `year` = ?", userId, year).
 		First(&total).Error
 
 	return total.Total, err

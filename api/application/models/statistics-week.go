@@ -22,7 +22,7 @@ func NewWealthStatisticsWeak() *WealthStatisticsWeak {
 func (m *WealthStatisticsWeak) GetTotal(userId uint64, startData, endDate string) (string, error) {
 
 	var total response.StatTotal
-	err := m.Db().Select("sum(total) total").
+	err := m.Db().Select("round(sum(total)) total").
 		Where("user_id = ? and start_date=? and end_date=?", userId, startData, endDate).
 		First(&total).Error
 

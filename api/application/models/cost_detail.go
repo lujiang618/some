@@ -92,7 +92,7 @@ func (m *WealthCostDetail) GetCurrentWeek(userId uint64) (string, error) {
 
 func (m *WealthCostDetail) GetTotalByDateScope(userId uint64, dateStart, dateEnd string) (string, error) {
 	var total response.StatTotal
-	err := m.Db().Select("sum(amount) total").
+	err := m.Db().Select("round(sum(amount)) total").
 		Where("user_id = ? and occur_date between ? and ?", userId, dateStart, dateEnd).
 		First(&total).Error
 
