@@ -21,7 +21,7 @@ func NewEarningFilter() *EarningFilter {
 	}
 }
 
-func (f EarningFilter) GetList(c *gin.Context) (*response.CostListObject, *api.Error) {
+func (f EarningFilter) GetList(c *gin.Context) (*response.EarningListObject, *api.Error) {
 	params := &request.CostParamList{}
 
 	if err := c.ShouldBindQuery(params); err != nil {

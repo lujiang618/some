@@ -1,70 +1,9 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-      <a-row>
-        <a-col :sm="3" :xs="20">
-          <info title="本年支出" :value="analyse.TotalYear" :bordered="true"/>
-        </a-col>
-        <a-col :sm="3" :xs="20">
-          <info title="上月支出" :value="analyse.lastMonth" :bordered="true"/>
-        </a-col>
-        <a-col :sm="3" :xs="20">
-          <info title="本月支出" :value="analyse.currentMonth" :bordered="true" />
-        </a-col>
-        <a-col :sm="3" :xs="240">
-          <info title="本周支出" :value="analyse.currentWeek" :bordered="true" />
-        </a-col>
-        <a-col :sm="3" :xs="20">
-          <info title="上周支出" :value="analyse.lastWeek" :bordered="true"/>
-        </a-col>
-        <a-col :sm="3" :xs="20">
-          <info title="本年日均" :value="analyse.avgYear + ' / ' + analyse.avgYearNoLoad" :bordered="true"/>
-        </a-col>
-        <a-col :sm="3" :xs="20">
-          <info title="本周日均" :value="analyse.avgWeek + ' / ' + analyse.avgWeekNoLoad" :bordered="true"/>
-        </a-col>
-      </a-row>
-    </a-card>
-    <a-card style="margin-top: 24px" :bordered="false" title="支出列表">
-      <div slot="extra">
-        <a-radio-group v-model="status">
-          <a-radio-button value="all">全部</a-radio-button>
-          <a-radio-button value="processing">进行中</a-radio-button>
-          <a-radio-button value="waiting">等待中</a-radio-button>
-        </a-radio-group>
-      </div>
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="3" :sm="10">
-              <a-form-item label="年">
-                <a-select v-model="queryParam.year" placeholder="请选择" default-value="0">
-                  <a-select-option v-for="item in years" :key="item.value" >
-                    {{ item.label }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="3" :sm="10">
-              <a-form-item label="月">
-                <a-select v-model="queryParam.month" placeholder="请选择" default-value="0">
-                  <a-select-option v-for="item in months" :key="item.value" default-value="0">
-                    {{ item.label }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="5" :sm="20">
-              <a-form-item label="日期" validateStatus="success">
-                <a-range-picker v-model="queryParam.date_range" :format="dateFormat" :valueFormat="dateFormat">
-                  <template slot="dateRender" slot-scope="current">
-                    <div class="ant-calendar-date" :style="getCurrentStyle(current)">
-                      {{ current.date() }}
-                    </div>
-                  </template>
-                </a-range-picker>
-              </a-form-item>
-            </a-col>
             <a-col :md="3" :sm="14">
               <a-form-item label="内容">
                 <a-input v-model="queryParam.content" placeholder=""/>
@@ -72,14 +11,23 @@
             </a-col>
             <a-col :md="3" :sm="10">
               <a-form-item label="类别">
-                <a-select v-model="queryParam.category_id" placeholder="请选择" default-value="0">
-                  <a-select-option v-for="item in categories" :key="item.id" >
+                <a-select v-model="queryParam.type" placeholder="请选择" default-value="0">
+                  <a-select-option v-for="item in types" :key="item.id" >
                     {{ item.name }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="使用状态">
+                  <a-select placeholder="请选择" default-value="0">
+                    <a-select-option value="0">全部</a-select-option>
+                    <a-select-option value="1">关闭</a-select-option>
+                    <a-select-option value="2">运行中</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
@@ -131,7 +79,7 @@
 
         <span slot="action" slot-scope="text, record">
           <template>
-            <a @click="handleEdit(record)">修改</a>
+            <a @click="handleEdit(record)">更新</a>
             <a-divider type="vertical" />
             <a @click="handleSub(record)">订阅报警</a>
           </template>
@@ -148,35 +96,59 @@
       />
       <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
-
   </page-header-wrapper>
 </template>
 
 <script>
 import moment from 'moment'
-import { STable, Ellipsis } from '@/components'
-import { getCostCategories, getCostList } from '@/api/wealth'
-import { getAnalyse } from '@/api/analyse'
-import Info from './components/Info'
-
 import StepByStepModal from './modules/StepByStepModal'
-import CreateForm from './modules/CreateForm'
+import CreateForm from './modules/EarningCreateForm'
+
+import { STable, Ellipsis } from '@/components'
+import { getRoleList } from '@/api/manage'
+import { getEarningList } from '@/api/earning'
 import { mapActions } from 'vuex'
+
+const types = [
+  {
+    id: 1,
+    name: '活期存款'
+  },
+  {
+    id: 2,
+    name: '定期存款'
+  },
+  {
+    id: 3,
+    name: '余额宝'
+  },
+  {
+    id: 4,
+    name: '支付宝'
+  },
+  {
+    id: 5,
+    name: '微信'
+  },
+  {
+    id: 6,
+    name: '零钱通'
+  },
+  {
+    id: 7,
+    name: '现金'
+  }
+]
 
 const columns = [
   {
     title: '#',
     scopedSlots: { customRender: 'serial' }
   },
-  {
-    title: '日期',
+   {
+    title: '类型',
     sorter: true,
-    dataIndex: 'occur_date'
-  },
-  {
-    title: '类别',
-    sorter: true,
-    dataIndex: 'category_name'
+    dataIndex: 'type_name'
   },
   {
     title: '内容',
@@ -221,9 +193,8 @@ const statusMap = {
 }
 
 export default {
-  name: 'TableList',
+  name: 'EarningList',
   components: {
-    Info,
     STable,
     Ellipsis,
     CreateForm,
@@ -232,11 +203,6 @@ export default {
   data () {
     this.columns = columns
     return {
-      yearsModel: null,
-      years: [],
-      monthsModel: null,
-      months: [],
-      dateFormat: 'YYYY-MM-DD',
       // create model
       visible: false,
       confirmLoading: false,
@@ -250,27 +216,12 @@ export default {
         parameter.user_id = 1
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         console.log('loadData request parameters:', requestParameters)
-        if (requestParameters.occur_date != null) {
-          requestParameters.occur_date = moment(requestParameters.occur_date).format('YYYY-MM-DD')
-        }
-
-        return getCostList(requestParameters)
+        return getEarningList(requestParameters)
           .then(res => {
             return res.result
           })
       },
-      analyse: {
-        TotalYear: 0,
-        currentMonth: 0,
-        currentWeek: 0,
-        lastMonth: 0,
-        lastWeek: 0,
-        avgYear: 0,
-        avgYearNoLoad: 0,
-        avgWeek: 0,
-        avgWeekNoLoad: 0
-      },
-      categories: [],
+      types: types,
       selectedRowKeys: [],
       selectedRows: []
     }
@@ -284,9 +235,7 @@ export default {
     }
   },
   created () {
-    this.init()
-    this.getCategories()
-    this.getAnalyse()
+    getRoleList({ t: new Date() })
   },
   computed: {
     rowSelection () {
@@ -297,8 +246,7 @@ export default {
     }
   },
   methods: {
-    moment,
-    ...mapActions(['CreateCost', 'UpdateCost']),
+    ...mapActions(['CreateEarning', 'UpdateEarning']),
     handleAdd () {
       this.mdl = null
       this.visible = true
@@ -309,16 +257,15 @@ export default {
     },
     handleOk () {
       const form = this.$refs.createModal.form
-      const { UpdateCost, CreateCost } = this
+      const { CreateEarning, UpdateEarning } = this
       this.confirmLoading = true
       form.validateFields((errors, values) => {
         if (!errors) {
           values.User_id = 1
-          values.occur_date = moment(values.occur_date).format('YYYY-MM-DD')
           console.log('values', values)
           if (values.id > 0) {
             // 修改 e.g.
-            UpdateCost(values).then(res => {
+            UpdateEarning(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
@@ -330,7 +277,7 @@ export default {
             })
           } else {
             // 新增
-           CreateCost(values).then(res => {
+           CreateEarning(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
@@ -365,66 +312,6 @@ export default {
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
-    },
-    getCategories () {
-      var parameter = {}
-      parameter.user_id = 1
-      getCostCategories(parameter).then(res => {
-        if (res.result.data.length > 0) {
-          this.categories = res.result.data
-        }
-      }).catch((err) => {
-        console.log('category list', err)
-      })
-    },
-    getAnalyse () {
-      var parameter = {}
-      parameter.user_id = 1
-      getAnalyse(parameter).then(res => {
-        this.analyse.currentMonth = res.result.current_month
-        this.analyse.currentWeek = res.result.current_week
-        this.analyse.lastMonth = res.result.last_month
-        this.analyse.lastWeek = res.result.last_week
-        this.analyse.avgYear = res.result.avg_current_year
-        this.analyse.avgYearNoLoad = res.result.avg_current_year_no_load
-        this.analyse.avgWeek = res.result.avg_current_week
-        this.analyse.avgWeekNoLoad = res.result.avg_current_week_no_load
-        this.analyse.TotalYear = res.result.total_year
-      }).catch((err) => {
-        console.log('category list', err)
-      })
-    },
-    getCurrentStyle (current, today) {
-      const style = {}
-      if (current.date() === 1) {
-        style.border = '1px solid #1890ff'
-        style.borderRadius = '50%'
-      }
-      return style
-    },
-    init () {
-      var myDate = new Date()
-      var year = myDate.getFullYear() // 获取当前年
-      // var month = myDate.getMonth() + 1 // 获取当前月
-
-      this.initSelectYear(year)
-      this.initSelectMonth()
-      // this.queryParam.year = year
-      // this.queryParam.month = month
-    },
-    initSelectYear (year) {
-      this.years = []
-      this.years.push({ value: 0, label: '全部' })
-      for (let i = 0; i < 30; i++) {
-        this.years.push({ value: (year - i), label: (year - i) + '年' })
-      }
-    },
-    initSelectMonth () {
-      this.months = []
-      this.months.push({ value: 0, label: '全部' })
-        for (let i = 1; i <= 12; i++) {
-          this.months.push({ value: i, label: i + '月' })
-        }
     },
     resetSearchForm () {
       this.queryParam = {

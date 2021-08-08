@@ -25,7 +25,6 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
-        hidden: true,
         children: [
           {
             path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
@@ -48,14 +47,18 @@ export const asyncRouterMap = [
         component: RouteView,
         meta: { title: '账簿', icon: 'table', keepAlive: true, permission: [ 'table' ] },
         redirect: '/wealth/index',
-        hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
         children: [
           {
             path: '/wealth/index',
             name: 'CostIndex',
-            hidden: true,
-            component: () => import('@/views/wealth/TableList'),
+            component: () => import('@/views/wealth/CostList'),
             meta: { title: '记账簿', keepAlive: true, hidden: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/earning/index',
+            name: 'EarningIndex',
+            component: () => import('@/views/wealth/EarningList'),
+            meta: { title: '存款', keepAlive: true, hidden: true, permission: [ 'table' ] }
           }
         ]
       },

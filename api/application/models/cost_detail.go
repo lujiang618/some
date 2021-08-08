@@ -33,8 +33,8 @@ func NewWealthCostDetail() *WealthCostDetail {
 	return detail
 }
 
-func (m *WealthCostDetail) GetList(params *request.CostParamList) (*[]response.CostDetailObject, int, error) {
-	details := make([]response.CostDetailObject, 0)
+func (m *WealthCostDetail) GetList(params *request.CostParamList) (*[]response.CostObject, int, error) {
+	details := make([]response.CostObject, 0)
 	query := m.Db().Where("user_id = ?", params.UserId)
 	if len(params.DateRange) == 2 {
 		query = query.Where("occur_date between ? and ?", params.DateRange[0], params.DateRange[1])
@@ -130,8 +130,8 @@ func (m *WealthCostDetail) GetAvgByDateScopeNoLoad(userId uint64, dateStart, dat
 	return avg.Avg, err
 }
 
-func (m *WealthCostDetail) GetDetail(id int) (*response.CostDetailObject, error) {
-	detail := &response.CostDetailObject{}
+func (m *WealthCostDetail) GetDetail(id int) (*response.CostObject, error) {
+	detail := &response.CostObject{}
 	err := m.Db().Where("id = ?", id).First(detail).Error
 
 	return detail, err

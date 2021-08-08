@@ -10,22 +10,6 @@ const api = {
   orgTree: '/v1/org/tree'
 }
 
-export function getUserList (parameter) {
-  return request({
-    url: api.user,
-    method: 'get',
-    params: parameter
-  })
-}
-
-export function getRoleList (parameter) {
-  return request({
-    url: api.role,
-    method: 'get',
-    params: parameter
-  })
-}
-
 export function getCostList (parameter) {
   return request({
     url: api.cost,
@@ -55,21 +39,5 @@ export function updateCost (parameter) {
     url: api.cost,
     method: 'put',
     data: parameter
-  })
-}
-
-export function saveService (parameter) {
-  return request({
-    url: api.service,
-    method: parameter.id === 0 ? 'post' : 'put',
-    data: parameter
-  })
-}
-
-export function saveSub (sub) {
-  return request({
-    url: '/sub',
-    method: sub.id === 0 ? 'post' : 'put',
-    data: sub
   })
 }

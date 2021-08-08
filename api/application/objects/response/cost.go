@@ -2,7 +2,7 @@ package response
 
 import "some/api/pkg/utils"
 
-type CostDetailObject struct {
+type CostObject struct {
 	Id           int            `json:"id" gorm:"primary_key"`
 	UserId       uint64         `json:"user_id"`
 	CategoryId   int            `json:"category_id"`
@@ -18,11 +18,11 @@ type CostDetailObject struct {
 }
 
 type CostListObject struct {
-	PageSize   int                 `json:"page_size"`
-	PageNo     int                 `json:"page_no"`
-	TotalCount int                 `json:"total_count"`
-	TotalPage  int                 `json:"total_page"`
-	Data       *[]CostDetailObject `json:"data"`
+	PageSize   int           `json:"page_size"`
+	PageNo     int           `json:"page_no"`
+	TotalCount int           `json:"total_count"`
+	TotalPage  int           `json:"total_page"`
+	Data       *[]CostObject `json:"data"`
 }
 
 type CostCategoryObject struct {

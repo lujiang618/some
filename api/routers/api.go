@@ -36,7 +36,7 @@ func CreateApiRouter() {
 
 	v1Earning := Router.Group("/v1/w/e")
 	{
-		v1Earning.GET("/cost", controllers.NewEarningController().GetList)    // 支出列表
+		v1Earning.GET("/earning", controllers.NewEarningController().GetList) // 支出列表
 		v1Earning.POST("/earning", controllers.NewEarningController().Create) // 支出列表
 		v1Earning.PUT("/earning", controllers.NewEarningController().Update)  // 支出列表
 	}

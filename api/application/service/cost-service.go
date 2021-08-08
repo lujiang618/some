@@ -33,7 +33,7 @@ func (s *CostService) GetList(params *request.CostParamList) (*response.CostList
 	return result, nil
 }
 
-func (s *CostService) ApplyCategorys(rows *[]response.CostDetailObject) error {
+func (s *CostService) ApplyCategorys(rows *[]response.CostObject) error {
 	var categoryIds = make([]int, 0, len(*rows))
 
 	for _, row := range *rows {
@@ -52,7 +52,8 @@ func (s *CostService) ApplyCategorys(rows *[]response.CostDetailObject) error {
 
 	return nil
 }
-func (s *CostService) GetDetail(params *request.CostParamDetail) (*response.CostDetailObject, *api.Error) {
+
+func (s *CostService) GetDetail(params *request.CostParamDetail) (*response.CostObject, *api.Error) {
 
 	data, err := models.NewWealthCostDetail().GetDetail(params.Id)
 	if err != nil {

@@ -35,7 +35,7 @@ func (f CostFilter) GetList(c *gin.Context) (*response.CostListObject, *api.Erro
 	return data, err
 }
 
-func (f CostFilter) GetDetail(c *gin.Context) (*response.CostDetailObject, *api.Error) {
+func (f CostFilter) GetDetail(c *gin.Context) (*response.CostObject, *api.Error) {
 	params := &request.CostParamDetail{}
 
 	if err := c.ShouldBindUri(params); err != nil {

@@ -25,13 +25,13 @@ type WealthEarning struct {
 func NewWWealthEarning() *WealthEarning {
 	earning := &WealthEarning{}
 
-	earning.SetTableName("wealth_earning")
+	earning.SetTableName("wealth_earnings")
 
 	return earning
 }
 
-func (m *WealthEarning) GetList(params *request.CostParamList) (*[]response.CostDetailObject, int, error) {
-	details := make([]response.CostDetailObject, 0)
+func (m *WealthEarning) GetList(params *request.CostParamList) (*[]response.EarningObject, int, error) {
+	details := make([]response.EarningObject, 0)
 	query := m.Db().Where("user_id = ?", params.UserId)
 	if len(params.DateRange) == 2 {
 		query = query.Where("occur_date between ? and ?", params.DateRange[0], params.DateRange[1])

@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="记一笔"
+    title="赚钱啦"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
@@ -13,19 +13,10 @@
         <a-form-item v-show="model && model.id > 0" label="主键ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
-        <a-form-item label="日期" validateStatus="success">
-          <a-date-picker
-            style="width: 100%"
-            showTime
-            format="YYYY-MM-DD"
-            placeholder="Select Time"
-            v-decorator="['occur_date', {rules: [{ required: true, message: '请选择日期' }]}]"
-          />
-        </a-form-item>
 
-        <a-form-item label="类别" validateStatus="success" >
-          <a-select :default-value="{ key: 12 }" v-decorator="['category_id', {rules: [{ required: true, message: '请选择类别' }]}]">
-            <a-select-option v-for="item in categories" :key="item.id" >
+        <a-form-item label="类型" validateStatus="success" >
+          <a-select :default-value="{ key: 0 }" v-decorator="['type', {rules: [{ required: true, message: '请选择类型' }]}]">
+            <a-select-option v-for="item in types" :key="item.id" >
               {{ item.name }}
             </a-select-option>
           </a-select>
@@ -38,6 +29,7 @@
         <a-form-item label="金额" help="请填写支出金额（单位：元）">
           <a-input placeholder="金额" v-decorator="[ 'amount', {rules: [{ required: true, message: '请输入金额' }]} ]"></a-input>
         </a-form-item>
+
         <a-form-item label="描述">
           <a-input v-decorator="['description']" />
         </a-form-item>
@@ -49,11 +41,40 @@
 <script>
 import pick from 'lodash.pick'
 import moment from 'moment'
-import { mapActions } from 'vuex'
 
 // 表单字段
-const fields = ['occur_date', 'category_id', 'content', 'amount', 'description', 'id']
+const fields = ['type', 'content', 'amount', 'description', 'id']
 
+const types = [
+  {
+    id: 1,
+    name: '活期存款'
+  },
+  {
+    id: 2,
+    name: '定期存款'
+  },
+  {
+    id: 3,
+    name: '余额宝'
+  },
+  {
+    id: 4,
+    name: '支付宝'
+  },
+  {
+    id: 5,
+    name: '微信'
+  },
+  {
+    id: 6,
+    name: '零钱通'
+  },
+  {
+    id: 7,
+    name: '现金'
+  }
+]
 export default {
   props: {
     visible: {
@@ -81,7 +102,7 @@ export default {
       }
     }
     return {
-       categories: [],
+      types: types,
       form: this.$form.createForm(this)
     }
   },
@@ -95,27 +116,9 @@ export default {
     this.$watch('model', () => {
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
-
-    this.getCategories()
   },
   methods: {
-    moment,
-    ...mapActions(['CostCategories']),
-    getCurrentData () {
-      return new Date().toLocaleDateString()
-    },
-    getCategories () {
-      const { CostCategories } = this
-      var parameter = {}
-      parameter.user_id = 1
-      CostCategories(parameter).then(res => {
-        if (res.result.data.length > 0) {
-          this.categories = res.result.data
-        }
-      }).catch((err) => {
-        console.log('category list', err)
-      })
-    }
+    moment
   }
 }
 </script>
