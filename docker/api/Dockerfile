@@ -1,5 +1,5 @@
 # 指定基础镜像
-FROM golang:1.14.6 as builder
+FROM golang:1.16 as builder
 
 WORKDIR /go/src/api
 ADD ./api ./

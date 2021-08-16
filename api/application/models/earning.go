@@ -97,3 +97,11 @@ func (m *WealthEarning) Update(params *request.ParamEarningUpdate) error {
 	tx.Commit()
 	return nil
 }
+
+func (m *WealthEarning) GetCurrentTotal(userId uint64) (string, error) {
+	var total response.StatTotal
+	err := m.Db().Select("sum(amount) total").
+		Where("user_id = ?", userId).First(&total).Error
+
+	return total.Total, err
+}

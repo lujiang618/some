@@ -33,6 +33,18 @@ export const asyncRouterMap = [
             meta: { title: 'menu.dashboard.analysis', keepAlive: false, permission: [ 'dashboard' ] }
           },
           {
+            path: '/dashboard/Statistics/:pageNo([1-9]\\d*)?',
+            name: 'Statistics',
+            component: () => import('@/views/dashboard/Statistics'),
+            meta: { title: 'menu.dashboard.statistics', keepAlive: false, permission: [ 'dashboard' ] }
+          },
+          {
+            path: '/dashboard/monitor/:pageNo([1-9]\\d*)?',
+            name: 'Monitor',
+            component: () => import('@/views/dashboard/Monitor'),
+            meta: { title: 'menu.dashboard.monitor', keepAlive: false, permission: [ 'dashboard' ] }
+          },
+          {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),

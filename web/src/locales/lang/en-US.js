@@ -14,6 +14,7 @@ const locale = {
   'menu.dashboard.analysis': 'Analysis',
   'menu.dashboard.monitor': 'Monitor',
   'menu.dashboard.workplace': 'Workplace',
+  'menu.dashboard.statistics': 'Statistics',
 
   'layouts.usermenu.dialog.title': 'Message',
   'layouts.usermenu.dialog.content': 'Do you really log-out.',

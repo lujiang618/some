@@ -36,3 +36,18 @@ func (f AnalyseFilter) GetAll(c *gin.Context) (*response.Stat, *api.Error) {
 
 	return data, err
 }
+
+func (f AnalyseFilter) GetCharts(c *gin.Context) (*response.Charts, *api.Error) {
+	params := &request.AnalyseParamsCharts{}
+
+	if err := c.ShouldBindJSON(params); err != nil {
+		return nil, api.NewError(code.ErrorRequest, err.Error())
+	}
+
+	spew.Dump(params)
+
+	// 调用service对应的方法
+	data, err := f.service.GetCharts(params)
+
+	return data, err
+}

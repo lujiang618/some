@@ -29,3 +29,13 @@ func (ctl *AnalyseController) GetAll(c *gin.Context) {
 
 	api.SetResponse(c, http.StatusOK, code.Success, data)
 }
+
+func (ctl *AnalyseController) GetCharts(c *gin.Context) {
+	data, err := ctl.paramFilter.GetCharts(c)
+	if err != nil {
+		api.SetResponse(c, http.StatusOK, err.Code, err.Message)
+		return
+	}
+
+	api.SetResponse(c, http.StatusOK, code.Success, data)
+}

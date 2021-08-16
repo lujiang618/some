@@ -20,17 +20,31 @@ import (
 + 本周日均
 **/
 type AnalyseService struct {
-	objDetail *models.WealthCostDetail
-	objMonth  *models.WealthStatisticsMonth
-	objWeek   *models.WealthStatisticsWeak
+	objDetail  *models.WealthCostDetail
+	objMonth   *models.WealthStatisticsMonth
+	objWeek    *models.WealthStatisticsWeak
+	objEarning *models.WealthEarning
 }
 
 func NewAnalyseService() *AnalyseService {
 	return &AnalyseService{
-		objDetail: models.NewWealthCostDetail(),
-		objMonth:  models.NewWealthStatisticsMonth(),
-		objWeek:   models.NewWealthStatisticsWeak(),
+		objDetail:  models.NewWealthCostDetail(),
+		objMonth:   models.NewWealthStatisticsMonth(),
+		objWeek:    models.NewWealthStatisticsWeak(),
+		objEarning: models.NewWWealthEarning(),
 	}
+}
+func (s *AnalyseService) GetCharts(params *request.AnalyseParamsCharts) (*response.Charts, *api.Error) {
+	totalEarning, err := s.objEarning.GetCurrentTotal(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	data := &response.Charts{
+		TotalEarning: totalEarning,
+	}
+
+	return data, nil
 }
 
 func (s *AnalyseService) GetAll(params *request.AnalyseParamsAll) (*response.Stat, *api.Error) {

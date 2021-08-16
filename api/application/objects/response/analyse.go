@@ -38,6 +38,10 @@ type Stat struct {
 	AvgCurrentYearNoLoad string `json:"avg_current_year_no_load"`
 }
 
+type Charts struct {
+	TotalEarning string `json:"totalEarning"`
+}
+
 type StatTotal struct {
 	Total string
 }
