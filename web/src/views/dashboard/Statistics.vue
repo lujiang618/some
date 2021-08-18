@@ -25,7 +25,7 @@
             <a-icon type="info-circle-o" />
           </a-tooltip>
           <div>
-            <mini-area />
+            <mini-area :data="data1" />
           </div>
           <template slot="footer">日访问量<span> {{ '1234' | NumberFormat }}</span></template>
         </chart-card>
@@ -127,11 +127,11 @@
               </div>
 
             </div>
-            <h4>销售额</h4>
+            <h4>支出额</h4>
             <div>
               <!-- style="width: calc(100% - 240px);" -->
               <div>
-                <v-chart :force-fit="true" :height="405" :data="pieData" :scale="pieScale">
+                <v-chart :force-fit="true" :height="405" :data="pieDataMonth" :scale="pieScale">
                   <v-tooltip :showTitle="false" dataKey="item*percent" />
                   <v-axis />
                   <!-- position="right" :offsetX="-140" -->
@@ -144,6 +144,52 @@
             </div>
           </a-card>
         </a-col>
+
+        <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
+          <a-card class="antd-pro-pages-dashboard-analysis-salesCard" :loading="loading" :bordered="false" title="月支出类别占比（无房贷、房租）" :style="{ height: '100%' }">
+            <div slot="extra" style="height: inherit;">
+              <!-- style="bottom: 12px;display: inline-block;" -->
+              <span class="dashboard-analysis-iconGroup">
+                <a-dropdown :trigger="['click']" placement="bottomLeft">
+                  <a-icon type="ellipsis" class="ant-dropdown-link" />
+                  <a-menu slot="overlay">
+                    <a-menu-item>
+                      <a href="javascript:;">操作一</a>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <a href="javascript:;">操作二</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </span>
+              <div class="analysis-salesTypeRadio">
+                <a-radio-group defaultValue="a">
+                  <a-radio-button value="a">全部渠道</a-radio-button>
+                  <a-radio-button value="b">线上</a-radio-button>
+                  <a-radio-button value="c">门店</a-radio-button>
+                </a-radio-group>
+              </div>
+
+            </div>
+            <h4>支出额</h4>
+            <div>
+              <!-- style="width: calc(100% - 240px);" -->
+              <div>
+                <v-chart :force-fit="true" :height="405" :data="pieDataMonthNoLoad" :scale="pieScale">
+                  <v-tooltip :showTitle="false" dataKey="item*percent" />
+                  <v-axis />
+                  <!-- position="right" :offsetX="-140" -->
+                  <v-legend dataKey="item"/>
+                  <v-pie position="percent" color="item" :vStyle="pieStyle" />
+                  <v-coord type="theta" :radius="0.75" :innerRadius="0.6" />
+                </v-chart>
+              </div>
+
+            </div>
+          </a-card>
+        </a-col>
+      </a-row>
+      <a-row :gutter="24" type="flex" :style="{ marginTop: '24px' }">
         <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
           <a-card class="antd-pro-pages-dashboard-analysis-salesCard" :loading="loading" :bordered="false" title="周支出类别占比" :style="{ height: '100%' }">
             <div slot="extra" style="height: inherit;">
@@ -170,11 +216,55 @@
               </div>
 
             </div>
-            <h4>销售额</h4>
+            <h4>支出额</h4>
             <div>
               <!-- style="width: calc(100% - 240px);" -->
               <div>
-                <v-chart :force-fit="true" :height="405" :data="pieData" :scale="pieScale">
+                <v-chart :force-fit="true" :height="405" :data="pieDataWeek" :scale="pieScale">
+                  <v-tooltip :showTitle="false" dataKey="item*percent" />
+                  <v-axis />
+                  <!-- position="right" :offsetX="-140" -->
+                  <v-legend dataKey="item"/>
+                  <v-pie position="percent" color="item" :vStyle="pieStyle" />
+                  <v-coord type="theta" :radius="0.75" :innerRadius="0.6" />
+                </v-chart>
+              </div>
+
+            </div>
+          </a-card>
+        </a-col>
+
+        <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
+          <a-card class="antd-pro-pages-dashboard-analysis-salesCard" :loading="loading" :bordered="false" title="周支出类别占比（无房贷、房租）" :style="{ height: '100%' }">
+            <div slot="extra" style="height: inherit;">
+              <!-- style="bottom: 12px;display: inline-block;" -->
+              <span class="dashboard-analysis-iconGroup">
+                <a-dropdown :trigger="['click']" placement="bottomLeft">
+                  <a-icon type="ellipsis" class="ant-dropdown-link" />
+                  <a-menu slot="overlay">
+                    <a-menu-item>
+                      <a href="javascript:;">操作一</a>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <a href="javascript:;">操作二</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </span>
+              <div class="analysis-salesTypeRadio">
+                <a-radio-group defaultValue="a">
+                  <a-radio-button value="a">全部渠道</a-radio-button>
+                  <a-radio-button value="b">线上</a-radio-button>
+                  <a-radio-button value="c">门店</a-radio-button>
+                </a-radio-group>
+              </div>
+
+            </div>
+            <h4>支出额</h4>
+            <div>
+              <!-- style="width: calc(100% - 240px);" -->
+              <div>
+                <v-chart :force-fit="true" :height="405" :data="pieDataWeekNoLoad" :scale="pieScale">
                   <v-tooltip :showTitle="false" dataKey="item*percent" />
                   <v-axis />
                   <!-- position="right" :offsetX="-140" -->
@@ -201,12 +291,21 @@ import {
   MiniProgress,
   RankList,
   Bar,
-  Trend,
   NumberInfo,
   MiniSmoothArea
 } from '@/components'
 import { baseMixin } from '@/store/app-mixin'
 import { getStatistics } from '@/api/analyse'
+import moment from 'moment'
+const data1 = []
+const beginDay = new Date().getTime()
+
+for (let i = 0; i < 10; i++) {
+  data1.push({
+    x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
+    y: Math.round(Math.random() * 10)
+  })
+}
 
 const barData = []
 const barData2 = []
@@ -254,7 +353,7 @@ dv.transform({
   as: 'percent'
 })
 const pieData = dv.rows
-
+console.log('pieData---------------->', pieData)
 export default {
   name: 'Statistics',
   mixins: [baseMixin],
@@ -265,7 +364,6 @@ export default {
     MiniProgress,
     RankList,
     Bar,
-    Trend,
     NumberInfo,
     MiniSmoothArea
   },
@@ -280,7 +378,12 @@ export default {
 
       //
       pieScale,
-      pieData,
+      data1: data1,
+      pieData: [],
+      pieDataWeek: [],
+      pieDataWeekNoLoad: [],
+      pieDataMonth: [],
+      pieDataMonthNoLoad: [],
       sourceData,
       pieStyle: {
         stroke: '#fff',
@@ -300,6 +403,41 @@ export default {
       parameter.user_id = 1
       getStatistics(parameter).then(res => {
         this.totalEarning = '￥ ' + res.result.totalEarning
+        const dvWeek = new DataSet.View().source(res.result.pieScaleWeek)
+        dvWeek.transform({
+          type: 'percent',
+          field: 'count',
+          dimension: 'item',
+          as: 'percent'
+        })
+        this.pieDataWeek = dvWeek.rows
+
+        const dvMonth = new DataSet.View().source(res.result.pieScaleMonth)
+        dvMonth.transform({
+          type: 'percent',
+          field: 'count',
+          dimension: 'item',
+          as: 'percent'
+        })
+        this.pieDataMonth = dvMonth.rows
+
+        const dvMonthNoLoad = new DataSet.View().source(res.result.pieScaleMonthNoLoad)
+        dvMonthNoLoad.transform({
+          type: 'percent',
+          field: 'count',
+          dimension: 'item',
+          as: 'percent'
+        })
+        this.pieDataMonthNoLoad = dvMonthNoLoad.rows
+
+        const dvWeekNoLoad = new DataSet.View().source(res.result.pieScaleWeekNoLoad)
+        dvWeekNoLoad.transform({
+          type: 'percent',
+          field: 'count',
+          dimension: 'item',
+          as: 'percent'
+        })
+        this.pieDataWeekNoLoad = dvWeekNoLoad.rows
       }).catch((err) => {
         console.log('category list', err)
       })

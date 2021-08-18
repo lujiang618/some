@@ -39,7 +39,21 @@ type Stat struct {
 }
 
 type Charts struct {
-	TotalEarning string `json:"totalEarning"`
+	TotalEarning        string     `json:"totalEarning"`
+	PieScaleWeek        []PieScale `json:"pieScaleWeek"`
+	PieScaleWeekNoLoad  []PieScale `json:"pieScaleWeekNoLoad"`
+	PieScaleMonth       []PieScale `json:"pieScaleMonth"`
+	PieScaleMonthNoLoad []PieScale `json:"pieScaleMonthNoLoad"`
+}
+
+type PieScale struct {
+	Item  string  `json:"item"`
+	Count float64 `json:"count"`
+}
+
+type TotalCategory struct {
+	CategoryId int     `json:"category_id"`
+	Total      float64 `json:"total"`
 }
 
 type StatTotal struct {

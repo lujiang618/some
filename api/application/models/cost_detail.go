@@ -33,6 +33,36 @@ func NewWealthCostDetail() *WealthCostDetail {
 	return detail
 }
 
+func (m *WealthCostDetail) GetPercent(userId uint64, dateStart, dateEnd string) ([]response.TotalCategory, error) {
+	var totalCategories []response.TotalCategory
+	err := m.Db().Select("category_id, sum(amount) total").
+		Where("user_id = ? and occur_date between ? and ?", userId, dateStart, dateEnd).
+		Group("category_id").
+		Having("count(amount) > 0").
+		Find(&totalCategories).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	return totalCategories, nil
+}
+
+func (m *WealthCostDetail) GetPercentNoLoad(userId uint64, dateStart, dateEnd string) ([]response.TotalCategory, error) {
+	var totalCategories []response.TotalCategory
+	err := m.Db().Select("category_id, sum(amount) total").
+		Where("user_id = ? and occur_date between ? and ? and category_id not in (10,11)", userId, dateStart, dateEnd).
+		Group("category_id").
+		Having("count(amount) > 0").
+		Find(&totalCategories).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	return totalCategories, nil
+}
+
 func (m *WealthCostDetail) GetList(params *request.CostParamList) (*[]response.CostObject, int, error) {
 	details := make([]response.CostObject, 0)
 	query := m.Db().Where("user_id = ?", params.UserId)
