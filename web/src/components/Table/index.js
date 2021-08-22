@@ -29,7 +29,7 @@ export default {
     },
     pageSize: {
       type: Number,
-      default: 10
+      default: 20
     },
     showSizeChanger: {
       type: Boolean,
@@ -61,6 +61,10 @@ export default {
     showPagination: {
       type: String | Boolean,
       default: 'auto'
+    },
+    pageSizeOptions: {
+      type: Array,
+      default: [10, 20, 30, 50]
     },
     /**
      * enable page URI mode
@@ -158,6 +162,7 @@ export default {
       if ((typeof result === 'object' || typeof result === 'function') && typeof result.then === 'function') {
         result.then(r => {
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
+            pageSizeOptions: this.pageSizeOptions,
             current: r.pageNo, // 返回结果中的当前分页数
             total: r.totalCount, // 返回结果中的总记录数
             showSizeChanger: this.showSizeChanger,

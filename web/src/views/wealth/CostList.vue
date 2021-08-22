@@ -115,6 +115,7 @@
         rowKey="key"
         :columns="columns"
         :data="loadData"
+        :pageSizeOptions="pageSizeOptions"
         :alert="true"
         :rowSelection="rowSelection"
         showPagination="auto"
@@ -163,6 +164,9 @@ import { getCostCategories, getCostList } from '@/api/wealth'
 import { getAnalyse } from '@/api/analyse'
 import { mapActions } from 'vuex'
 
+const pageSizeOptions = [
+  '10', '20', '40', '60', '80', '100'
+]
 const columns = [
   {
     title: '#',
@@ -232,6 +236,7 @@ export default {
   data () {
     this.columns = columns
     return {
+      pageSizeOptions,
       yearsModel: null,
       years: [],
       monthsModel: null,

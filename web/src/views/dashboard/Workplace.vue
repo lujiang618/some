@@ -89,6 +89,8 @@
           <a-card title="快速开始 / 便捷导航" style="margin-bottom: 24px" :bordered="false" :body-style="{padding: 0}">
             <div class="item-group">
               <router-link :to="{ name: 'CostIndex', query:{ teamId: this.selectTeam} }">看账簿</router-link>
+              <router-link :to="{ name: 'EarningIndex', query:{ teamId: this.selectTeam} }">看资产</router-link>
+              <router-link :to="{ name: 'Statistics', query:{ teamId: this.selectTeam} }">看图表</router-link>
               <a>操作二</a>
               <a>操作三</a>
               <a>操作四</a>
