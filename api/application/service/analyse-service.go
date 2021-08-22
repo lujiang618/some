@@ -7,6 +7,7 @@ import (
 	"some/api/pkg/api"
 	"some/api/pkg/api/code"
 	"some/api/pkg/utils"
+	"strconv"
 )
 
 /***
@@ -42,6 +43,11 @@ func (s *AnalyseService) GetCharts(params *request.AnalyseParamsCharts) (*respon
 		return nil, api.NewError(code.ErrorDatabase, err.Error())
 	}
 
+	totalCost, err := s.GetTotalCost(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
 	pieScaleWeek, err := s.GetPieScaleWeek(params.UserId)
 	if err != nil {
 		return nil, api.NewError(code.ErrorDatabase, err.Error())
@@ -62,15 +68,152 @@ func (s *AnalyseService) GetCharts(params *request.AnalyseParamsCharts) (*respon
 		return nil, api.NewError(code.ErrorDatabase, err.Error())
 	}
 
+	totalDays, err := s.GetTotalDay(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	costTopWeek, err := s.GetCostTopWeek(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	costTopMonth, err := s.GetCostTopMonth(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	totalMonths, err := s.GetTotalMonths(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	totalWeeks, err := s.GetTotalWeeks(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	totalYearCategories, err := s.GetTotalYearCategory(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	totalMonthCategories, err := s.GetTotalMonthCategory(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	// 获取当前月支出
+	totalCurrentMonth, err := s.objDetail.GetCurrentMonth(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	totalCurrentDay, err := s.objDetail.GetCurrentDay(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	avgYear, err := s.objMonth.GetAvgYear(params.UserId, utils.GetCurrentYear())
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	avgMonth, err := s.objDetail.GetAvgCurrentMonth(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
+	avgWeek, err := s.objDetail.GetAvgCurrentWeek(params.UserId)
+	if err != nil {
+		return nil, api.NewError(code.ErrorDatabase, err.Error())
+	}
+
 	data := &response.Charts{
-		TotalEarning:        totalEarning,
-		PieScaleWeek:        pieScaleWeek,
-		PieScaleMonth:       pieScaleMonth,
-		PieScaleMonthNoLoad: pieScaleMonthNoLoad,
-		PieScaleWeekNoLoad:  pieScaleWeekNoLoad,
+		TotalEarning:         totalEarning,
+		TotalCost:            totalCost,
+		TotalCurrentMonth:    totalCurrentMonth,
+		TotalCurrentDay:      totalCurrentDay,
+		AvgYear:              avgYear,
+		AvgMonth:             avgMonth,
+		AvgWeek:              avgWeek,
+		PieScaleWeek:         pieScaleWeek,
+		PieScaleMonth:        pieScaleMonth,
+		PieScaleMonthNoLoad:  pieScaleMonthNoLoad,
+		PieScaleWeekNoLoad:   pieScaleWeekNoLoad,
+		TotalDays:            totalDays,
+		CostTopMonth:         costTopMonth,
+		CostTopWeek:          costTopWeek,
+		TotalMonths:          totalMonths,
+		TotalWeeks:           totalWeeks,
+		TotalYearCategories:  totalYearCategories,
+		TotalMonthCategories: totalMonthCategories,
 	}
 
 	return data, nil
+}
+
+func (s *AnalyseService) GetTotalCost(userId uint64) (string, error) {
+	return s.objMonth.GetTotalYear(userId)
+}
+
+func (s *AnalyseService) GetTotalWeeks(userId uint64) ([]response.TotalWeek, error) {
+	return s.objWeek.GetTotalWeeks(userId)
+}
+
+func (s *AnalyseService) GetTotalMonths(userId uint64) ([]response.TotalMonth, error) {
+	return s.objMonth.GetTotalMonths(userId)
+}
+
+func (s *AnalyseService) GetCostTopWeek(userId uint64) ([]response.CostTop, error) {
+	dateStart, dateEnd := utils.GetCurrentWeekScope()
+	tops, err := s.objDetail.GetTop(userId, dateStart, dateEnd)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.FormatCostTop(tops)
+}
+
+func (s *AnalyseService) GetCostTopMonth(userId uint64) ([]response.CostTop, error) {
+	dateStart, dateEnd := utils.GetCurrentMonthScope()
+
+	tops, err := s.objDetail.GetTop(userId, dateStart, dateEnd)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.FormatCostTop(tops)
+}
+
+func (s *AnalyseService) FormatCostTop(tops []response.CostObject) ([]response.CostTop, error) {
+	categoryIds := make([]int, 0, len(tops))
+	for _, top := range tops {
+		categoryIds = append(categoryIds, top.CategoryId)
+	}
+
+	categoryId2Name, err := s.objCategory.GetCategoryMap(categoryIds)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]response.CostTop, 0, len(tops))
+	for _, top := range tops {
+		total, _ := strconv.ParseFloat(top.Amount, 64)
+		result = append(result, response.CostTop{
+			Total: total,
+			Name:  categoryId2Name[top.CategoryId] + "-" + top.Content,
+		})
+	}
+
+	return result, nil
+}
+
+func (s *AnalyseService) GetTotalDay(userId uint64) ([]response.TotalDay, error) {
+	dateStart := utils.GetSubDate(15)
+	dateEnd := utils.GetCurrentDate()
+
+	return s.objDetail.GetTotalDay(userId, dateStart, dateEnd)
 }
 
 func (s *AnalyseService) GetPieScaleMonth(userId uint64) ([]response.PieScale, error) {
@@ -118,8 +261,48 @@ func (s *AnalyseService) GetPieScaleWeekNoLoad(userId uint64) ([]response.PieSca
 	return s.FormatPieScal(categoryPercents)
 }
 
-func (s *AnalyseService) FormatPieScal(categoryPercents []response.TotalCategory) ([]response.PieScale, error) {
+func (s *AnalyseService) GetTotalYearCategory(userId uint64) ([]response.TotalYearCategory, error) {
+	categories, err := s.objMonth.GetTotalCategory(userId)
+	if err != nil {
+		return nil, err
+	}
 
+	return s.FormatTotalCategory(categories)
+}
+
+func (s *AnalyseService) GetTotalMonthCategory(userId uint64) ([]response.TotalYearCategory, error) {
+	dateStart, dateEnd := utils.GetCurrentMonthScope()
+	categories, err := s.objDetail.GetTotalCategory(userId, dateStart, dateEnd)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.FormatTotalCategory(categories)
+}
+
+func (s *AnalyseService) FormatTotalCategory(categoryPercents []response.TotalCategory) ([]response.TotalYearCategory, error) {
+	categoryIds := make([]int, 0, len(categoryPercents))
+	for _, categoryPercent := range categoryPercents {
+		categoryIds = append(categoryIds, categoryPercent.CategoryId)
+	}
+
+	categoryId2Name, err := s.objCategory.GetCategoryMap(categoryIds)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]response.TotalYearCategory, 0, len(categoryPercents))
+	for _, categoryPercent := range categoryPercents {
+		result = append(result, response.TotalYearCategory{
+			Category: categoryId2Name[categoryPercent.CategoryId],
+			Total:    categoryPercent.Total,
+		})
+	}
+
+	return result, nil
+}
+
+func (s *AnalyseService) FormatPieScal(categoryPercents []response.TotalCategory) ([]response.PieScale, error) {
 	categoryIds := make([]int, 0, len(categoryPercents))
 	for _, categoryPercent := range categoryPercents {
 		categoryIds = append(categoryIds, categoryPercent.CategoryId)

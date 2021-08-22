@@ -20,45 +20,36 @@
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="每日支出" :total="8846 | NumberFormat">
+        <chart-card :loading="loading" title="支出类型-本年" :total="totalCost | NumberFormat">
+          <a-tooltip title="指标说明" slot="action">
+            <a-icon type="info-circle-o" />
+          </a-tooltip>
+          <div>
+            <mini-bar :data="totalYearCategories" />
+          </div>
+          <template slot="footer">日均 <span>{{ avgYear }}</span></template>
+        </chart-card>
+      </a-col>
+      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
+        <chart-card :loading="loading" title="支出类型-本月" :total="totalCurrentMonth | NumberFormat">
+          <a-tooltip title="指标说明" slot="action">
+            <a-icon type="info-circle-o" />
+          </a-tooltip>
+          <div>
+            <mini-bar :data="totalMonthCategories" />
+          </div>
+          <template slot="footer">日均 <span>{{ avgMonth }}</span></template>
+        </chart-card>
+      </a-col>
+      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
+        <chart-card :loading="loading" title="每日支出" :total="totalCurrentDay | NumberFormat">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
           <div>
             <mini-area :data="data1" />
           </div>
-          <template slot="footer">日访问量<span> {{ '1234' | NumberFormat }}</span></template>
-        </chart-card>
-      </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="支出类型" :total="6560 | NumberFormat">
-          <a-tooltip title="指标说明" slot="action">
-            <a-icon type="info-circle-o" />
-          </a-tooltip>
-          <div>
-            <mini-bar />
-          </div>
-          <template slot="footer">转化率 <span>60%</span></template>
-        </chart-card>
-      </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="运营活动效果" total="78%">
-          <a-tooltip title="指标说明" slot="action">
-            <a-icon type="info-circle-o" />
-          </a-tooltip>
-          <div>
-            <mini-progress color="rgb(19, 194, 194)" :target="80" :percentage="78" height="8px" />
-          </div>
-          <template slot="footer">
-            <trend flag="down" style="margin-right: 16px;">
-              <span slot="term">同周比</span>
-              12%
-            </trend>
-            <trend flag="up">
-              <span slot="term">日环比</span>
-              80%
-            </trend>
-          </template>
+          <template slot="footer">日均<span> {{ avgWeek | NumberFormat }}</span></template>
         </chart-card>
       </a-col>
     </a-row>
@@ -81,7 +72,7 @@
                 <bar :data="barData" title="销售额排行" />
               </a-col>
               <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="本月支出排行榜" :list="rankList"/>
+                <rank-list title="本月支出排行榜" :list="rankListMonth"/>
               </a-col>
             </a-row>
           </a-tab-pane>
@@ -91,7 +82,7 @@
                 <bar :data="barData2" title="销售额趋势" />
               </a-col>
               <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="本周支出排行榜" :list="rankList"/>
+                <rank-list title="本周支出排行榜" :list="rankListWeek"/>
               </a-col>
             </a-row>
           </a-tab-pane>
@@ -296,16 +287,6 @@ import {
 } from '@/components'
 import { baseMixin } from '@/store/app-mixin'
 import { getStatistics } from '@/api/analyse'
-import moment from 'moment'
-const data1 = []
-const beginDay = new Date().getTime()
-
-for (let i = 0; i < 10; i++) {
-  data1.push({
-    x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
-    y: Math.round(Math.random() * 10)
-  })
-}
 
 const barData = []
 const barData2 = []
@@ -320,40 +301,7 @@ for (let i = 0; i < 12; i += 1) {
   })
 }
 
-const rankList = []
-for (let i = 0; i < 7; i++) {
-  rankList.push({
-    name: '白鹭岛 ' + (i + 1) + ' 号店',
-    total: 1234.56 - i * 100
-  })
-}
-
 const DataSet = require('@antv/data-set')
-
-const sourceData = [
-  { item: '家用电器', count: 32.2 },
-  { item: '食用酒水', count: 21 },
-  { item: '个护健康', count: 17 },
-  { item: '服饰箱包', count: 13 },
-  { item: '母婴产品', count: 9 },
-  { item: '其他', count: 7.8 }
-]
-
-const pieScale = [{
-  dataKey: 'percent',
-  min: 0,
-  formatter: '.0%'
-}]
-
-const dv = new DataSet.View().source(sourceData)
-dv.transform({
-  type: 'percent',
-  field: 'count',
-  dimension: 'item',
-  as: 'percent'
-})
-const pieData = dv.rows
-console.log('pieData---------------->', pieData)
 export default {
   name: 'Statistics',
   mixins: [baseMixin],
@@ -370,21 +318,27 @@ export default {
   data () {
     return {
       loading: true,
-      rankList,
+      rankListWeek: [],
+      rankListMonth: [],
 
       totalEarning: '',
-      barData,
-      barData2,
+      totalCost: '',
+      avgYear: '',
+      avgMonth: '',
+      avgWeek: '',
+      barData: [],
+      barData2: [],
 
-      //
-      pieScale,
-      data1: data1,
+      data1: [],
+      totalYearCategories: [],
+      totalMonthCategories: [],
+      totalCurrentMonth: '',
+      totalCurrentDay: '',
       pieData: [],
       pieDataWeek: [],
       pieDataWeekNoLoad: [],
       pieDataMonth: [],
       pieDataMonthNoLoad: [],
-      sourceData,
       pieStyle: {
         stroke: '#fff',
         lineWidth: 1
@@ -403,6 +357,7 @@ export default {
       parameter.user_id = 1
       getStatistics(parameter).then(res => {
         this.totalEarning = '￥ ' + res.result.totalEarning
+        this.totalCost = '￥ ' + res.result.totalCost
         const dvWeek = new DataSet.View().source(res.result.pieScaleWeek)
         dvWeek.transform({
           type: 'percent',
@@ -438,6 +393,19 @@ export default {
           as: 'percent'
         })
         this.pieDataWeekNoLoad = dvWeekNoLoad.rows
+
+        this.data1 = res.result.totalDays
+        this.totalYearCategories = res.result.totalYearCategories
+        this.totalMonthCategories = res.result.totalMonthCategories
+        this.totalCurrentMonth = '￥ ' + res.result.totalCurrentMonth
+        this.totalCurrentDay = '￥ ' + res.result.totalCurrentDay
+        this.rankListWeek = res.result.costTopWeek
+        this.rankListMonth = res.result.costTopMonth
+        this.barData = res.result.totalMonths
+        this.barData2 = res.result.totalWeeks
+        this.avgYear = res.result.avgYear
+        this.avgMonth = res.result.avgMonth
+        this.avgWeek = res.result.avgWeek
       }).catch((err) => {
         console.log('category list', err)
       })

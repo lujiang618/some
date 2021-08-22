@@ -35,3 +35,9 @@ func TestGetWeekDay(t *testing.T) {
 func TestGetDayOfYear(t *testing.T) {
 	fmt.Println(utils.GetDayOfYear(time.Now()))
 }
+
+func TestGetSubDate(t *testing.T) {
+	fmt.Println(utils.GetSubDate(10))
+	fmt.Println(utils.GetSubDate(20))
+	fmt.Println(utils.GetSubDate(40))
+}

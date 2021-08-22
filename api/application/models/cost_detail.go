@@ -33,6 +33,40 @@ func NewWealthCostDetail() *WealthCostDetail {
 	return detail
 }
 
+func (m *WealthCostDetail) GetTotalCategory(userId uint64, dateStart, dateEnd string) ([]response.TotalCategory, error) {
+	var totalCategories []response.TotalCategory
+	err := m.Db().Select("category_id, sum(amount) as total").
+		Where("user_id = ? and occur_date between ? and ?", userId, dateStart, dateEnd).
+		Group("category_id").
+		Having("count(amount) > 0").
+		Order("total desc").
+		Find(&totalCategories).
+		Error
+
+	return totalCategories, err
+}
+
+func (m *WealthCostDetail) GetTop(userId uint64, dateStart, dateEnd string) ([]response.CostObject, error) {
+	var top []response.CostObject
+	err := m.Db().
+		Where("user_id = ? and occur_date between ? and ?", userId, dateStart, dateEnd).
+		Order("amount desc").
+		Limit(7).
+		Find(&top).
+		Error
+
+	return top, err
+}
+
+func (m *WealthCostDetail) GetTotalDay(userId uint64, dateStart, dateEnd string) ([]response.TotalDay, error) {
+	var totalDay []response.TotalDay
+	err := m.Db().Select("date_format(occur_date, '%Y-%m-%d') as `date`, sum(amount) as total").
+		Where("user_id = ? and occur_date between ? and ? and category_id not in (10,11)", userId, dateStart, dateEnd).
+		Group("occur_date").Find(&totalDay).Error
+
+	return totalDay, err
+}
+
 func (m *WealthCostDetail) GetPercent(userId uint64, dateStart, dateEnd string) ([]response.TotalCategory, error) {
 	var totalCategories []response.TotalCategory
 	err := m.Db().Select("category_id, sum(amount) total").
@@ -41,11 +75,8 @@ func (m *WealthCostDetail) GetPercent(userId uint64, dateStart, dateEnd string) 
 		Having("count(amount) > 0").
 		Find(&totalCategories).
 		Error
-	if err != nil {
-		return nil, err
-	}
 
-	return totalCategories, nil
+	return totalCategories, err
 }
 
 func (m *WealthCostDetail) GetPercentNoLoad(userId uint64, dateStart, dateEnd string) ([]response.TotalCategory, error) {
@@ -120,6 +151,12 @@ func (m *WealthCostDetail) GetCurrentWeek(userId uint64) (string, error) {
 	return m.GetTotalByDateScope(userId, dateStart, dateEnd)
 }
 
+func (m *WealthCostDetail) GetCurrentDay(userId uint64) (string, error) {
+	dateCurrent := utils.GetCurrentDate()
+
+	return m.GetTotalByDateScope(userId, dateCurrent, dateCurrent)
+}
+
 func (m *WealthCostDetail) GetTotalByDateScope(userId uint64, dateStart, dateEnd string) (string, error) {
 	var total response.StatTotal
 	err := m.Db().Select("round(sum(amount)) total").
@@ -131,17 +168,17 @@ func (m *WealthCostDetail) GetTotalByDateScope(userId uint64, dateStart, dateEnd
 
 func (m *WealthCostDetail) GetAvgCurrentMonth(userId uint64) (string, error) {
 	dateStart, dateEnd := utils.GetCurrentMonthScope()
-	return m.GetAvgByDateScope(userId, dateStart, dateEnd)
+	return m.GetAvgByDateScope(userId, dateStart, dateEnd, utils.GetCurrentMonthDay())
 }
 
 func (m *WealthCostDetail) GetAvgCurrentWeek(userId uint64) (string, error) {
 	dateStart, dateEnd := utils.GetCurrentWeekScope()
-	return m.GetAvgByDateScope(userId, dateStart, dateEnd)
+	return m.GetAvgByDateScope(userId, dateStart, dateEnd, utils.GetCurrentWeekDay())
 }
 
-func (m *WealthCostDetail) GetAvgByDateScope(userId uint64, dateStart, dateEnd string) (string, error) {
+func (m *WealthCostDetail) GetAvgByDateScope(userId uint64, dateStart, dateEnd string, day int) (string, error) {
 	var avg response.StatAvg
-	err := m.Db().Select("round(sum(amount)/?) as avg", utils.GetCurrentWeekDay()).
+	err := m.Db().Select("round(sum(amount)/?) as avg", day).
 		Where("user_id = ? and occur_date between ? and ? ", userId, dateStart, dateEnd).
 		First(&avg).Error
 	return avg.Avg, err

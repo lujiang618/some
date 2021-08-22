@@ -39,11 +39,24 @@ type Stat struct {
 }
 
 type Charts struct {
-	TotalEarning        string     `json:"totalEarning"`
-	PieScaleWeek        []PieScale `json:"pieScaleWeek"`
-	PieScaleWeekNoLoad  []PieScale `json:"pieScaleWeekNoLoad"`
-	PieScaleMonth       []PieScale `json:"pieScaleMonth"`
-	PieScaleMonthNoLoad []PieScale `json:"pieScaleMonthNoLoad"`
+	TotalEarning         string              `json:"totalEarning"`
+	TotalCost            string              `json:"totalCost"`
+	TotalCurrentMonth    string              `json:"totalCurrentMonth"`
+	TotalCurrentDay      string              `json:"totalCurrentDay"`
+	AvgYear              string              `json:"avgYear"`
+	AvgMonth             string              `json:"avgMonth"`
+	AvgWeek              string              `json:"avgWeek"`
+	PieScaleWeek         []PieScale          `json:"pieScaleWeek"`
+	PieScaleWeekNoLoad   []PieScale          `json:"pieScaleWeekNoLoad"`
+	PieScaleMonth        []PieScale          `json:"pieScaleMonth"`
+	PieScaleMonthNoLoad  []PieScale          `json:"pieScaleMonthNoLoad"`
+	TotalDays            []TotalDay          `json:"totalDays"`
+	CostTopMonth         []CostTop           `json:"costTopMonth"`
+	CostTopWeek          []CostTop           `json:"costTopWeek"`
+	TotalMonths          []TotalMonth        `json:"totalMonths"`
+	TotalWeeks           []TotalWeek         `json:"totalWeeks"`
+	TotalYearCategories  []TotalYearCategory `json:"totalYearCategories"`
+	TotalMonthCategories []TotalYearCategory `json:"totalMonthCategories"`
 }
 
 type PieScale struct {
@@ -52,8 +65,33 @@ type PieScale struct {
 }
 
 type TotalCategory struct {
-	CategoryId int     `json:"category_id"`
-	Total      float64 `json:"total"`
+	CategoryId int     `json:"x"`
+	Total      float64 `json:"y"`
+}
+
+type TotalYearCategory struct {
+	Category string  `json:"x"`
+	Total    float64 `json:"y"`
+}
+
+type TotalMonth struct {
+	Month string  `json:"x"`
+	Total float64 `json:"y"`
+}
+
+type TotalWeek struct {
+	Week  string  `json:"x"`
+	Total float64 `json:"y"`
+}
+
+type TotalDay struct {
+	Date  string  `json:"x"`
+	Total float64 `json:"y"`
+}
+
+type CostTop struct {
+	Name  string  `json:"name"`
+	Total float64 `json:"total"`
 }
 
 type StatTotal struct {

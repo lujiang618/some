@@ -18,6 +18,36 @@ func NewWealthStatisticsMonth() *WealthStatisticsMonth {
 	return statisticsMonth
 }
 
+func (m *WealthStatisticsMonth) GetTotalCategory(userId uint64) ([]response.TotalCategory, error) {
+	var totalCategories []response.TotalCategory
+	err := m.Db().Select("category_id, sum(total) as total").
+		Where("user_id = ? and year=2021", userId).
+		Group("category_id").
+		Having("count(total) > 0").
+		Order("total desc").
+		Find(&totalCategories).
+		Error
+
+	return totalCategories, err
+}
+
+func (m *WealthStatisticsMonth) GetTotalYear(userid uint64) (string, error) {
+	var total response.StatTotal
+	err := m.Db().Select("sum(total) as total").Where("user_id = ? and year=2021", userid).Group("year").First(&total).Error
+
+	return total.Total, err
+}
+
+func (m *WealthStatisticsMonth) GetTotalMonths(userId uint64) ([]response.TotalMonth, error) {
+	var totalMonths []response.TotalMonth
+	err := m.Db().Select("concat(`month`,'月') as `month`, sum(total) as total").
+		Where("user_id = ? and year=2021", userId).
+		Group("year,month").
+		Find(&totalMonths).Error
+
+	return totalMonths, err
+}
+
 func (m *WealthStatisticsMonth) GetMonthTotal(userId uint64, yearMonth string) (string, error) {
 	var total response.StatTotal
 	err := m.Db().

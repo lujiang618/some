@@ -19,6 +19,16 @@ func NewWealthStatisticsWeak() *WealthStatisticsWeak {
 	return statisticsWeak
 }
 
+func (m *WealthStatisticsWeak) GetTotalWeeks(userId uint64) ([]response.TotalWeek, error) {
+	var totalMonths []response.TotalWeek
+	err := m.Db().Select("date_format(start_date,'%m%d') as `week`, sum(total) as total").
+		Where("user_id = ? and year=2021", userId).
+		Group("year,start_date").
+		Find(&totalMonths).Error
+
+	return totalMonths, err
+}
+
 func (m *WealthStatisticsWeak) GetTotal(userId uint64, startData, endDate string) (string, error) {
 
 	var total response.StatTotal

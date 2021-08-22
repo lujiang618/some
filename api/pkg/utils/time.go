@@ -9,6 +9,16 @@ func GetCurrentTimeStamp() time.Time {
 	return time.Now().In(location)
 }
 
+func GetSubDate(intval int) string {
+	now := time.Now()
+
+	return now.AddDate(0, 0, -intval).Format(TimeStdDateFormat)
+}
+
+func GetCurrentDate() string {
+	return time.Now().Format(TimeStdDateFormat)
+}
+
 func GetMonthScope(date time.Time) (string, string) {
 	currentYear, currentMonth, _ := date.Date()
 	currentLocation := date.Location()
@@ -54,6 +64,11 @@ func GetWeekDay(date time.Time) int {
 	return day
 }
 
+func GetCurrentMonthDay() int {
+	_, _, day := time.Now().Date()
+
+	return day
+}
 func GetCurrentDayOfYear() int {
 	return GetDayOfYear(time.Now())
 }
