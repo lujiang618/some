@@ -210,7 +210,7 @@ func (s *AnalyseService) FormatCostTop(tops []response.CostObject) ([]response.C
 }
 
 func (s *AnalyseService) GetTotalDay(userId uint64) ([]response.TotalDay, error) {
-	dateStart := utils.GetSubDate(15)
+	dateStart := utils.GetSubDate(20)
 	dateEnd := utils.GetCurrentDate()
 
 	return s.objDetail.GetTotalDay(userId, dateStart, dateEnd)

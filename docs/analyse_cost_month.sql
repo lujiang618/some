@@ -28,7 +28,7 @@ begin
         sum(amount) total
     from wealth_cost_details
     where occur_date between date_start and date_end
-    group by date_format(occur_date,'%Y'),user_id,date_format(occur_date,'%Y%m'), category_id;
+    group by date_format(occur_date,'%Y'),date_format(occur_date,'%m'),user_id,date_format(occur_date,'%Y%m'), category_id;
 
 end
 //
