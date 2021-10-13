@@ -12,6 +12,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jinzhu/gorm v1.9.16
+	github.com/lujiang618/gtools v0.0.0-20211013035342-b88a61cce566 // indirect
 	github.com/onsi/gomega v1.14.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.8.1
