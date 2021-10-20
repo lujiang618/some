@@ -1,7 +1,9 @@
 package web
 
+var Web *Server
+
 func StartWebServer() {
-	web := NewServer()
-	web.Start()
-	web.Destroy()
+	Web = NewServer()
+	Web.Start()
+	Web.Destroy()
 }

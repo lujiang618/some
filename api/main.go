@@ -2,6 +2,7 @@ package main
 
 import (
 	"some/api/job"
+	"some/api/job/crontab"
 	"some/api/pkg/db"
 	"some/api/pkg/web"
 )
@@ -15,6 +16,7 @@ func main() {
 	// gin.SetMode(setting.ServerSetting.RunMode)
 
 	job.NewCommand().Process()
+	go crontab.Work.Start()
 
 	web.StartWebServer()
 	destroy()

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
@@ -36,6 +37,12 @@ func (w *Server) Start() {
 		WriteTimeout:      w.Config.WriteTimeout,
 	}
 
+	// pprof
+	go func() {
+		addr := fmt.Sprintf(":%v", 8807)
+		logrus.Info(http.ListenAndServe(addr, nil))
+	}()
+
 	go func() {
 		// service connections
 		if err := w.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -46,7 +53,7 @@ func (w *Server) Start() {
 	}()
 
 	// 阻塞进程，直到接收到关闭信号
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 }

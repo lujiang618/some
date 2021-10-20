@@ -1,11 +1,11 @@
 package config
 
 import (
+	"path"
 	"time"
 
-	"some/api/pkg/utils"
-
 	"github.com/gin-gonic/gin"
+	"github.com/lujiang618/gtools/pkg/utils"
 )
 
 // 关系型数据库配置信息
@@ -85,9 +85,9 @@ func init() {
 }
 
 func getConfigFileName() string {
-	if utils.PathExists("config/local.yaml") {
-		return "config/local.yaml"
+	if utils.IsValidPath(path.Join(utils.GetRootPath("some/api"), "config/local.yaml")) {
+		return path.Join(utils.GetRootPath("some/api"), "config/local.yaml")
 	}
 
-	return utils.StringSplice("config/", gin.Mode(), ".yaml")
+	return path.Join(utils.GetRootPath("some/api"), utils.StringSplit("config/", gin.Mode(), ".yaml"))
 }
