@@ -336,7 +336,7 @@ export default {
           } else {
             // 新增
            CreateCost(values).then(res => {
-              this.visible = false
+             // this.visible = false
               this.confirmLoading = false
               // 重置表单数据
               form.resetFields()

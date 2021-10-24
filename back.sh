@@ -12,10 +12,15 @@ if [ ! -d $path ]; then
     mkdir -p $path
 fi
 
-filename="$path/some.$date.sql"
+ddl="$path/some.$date.sql"
+dml="$path/some.$date.data.sql"
 echo $filename
 
-docker exec mysql sh -c 'exec mysqldump -uroot -proot some' > $filename
+# 导出表结构
+docker exec mysql mysqldump -uroot -proot -d some > $ddl
+
+# 导出数据
+docker exec mysql mysqldump -uroot -proot -t some > $dml
 
 # TODO 对备份文件进行压缩打包
 ls -l $path
