@@ -64,3 +64,4 @@ func (l *Loader) WatchConfig() {
 		l.LoadConfig()
 	})
 }
+

@@ -35,9 +35,13 @@ func (s *CostService) GetList(params *request.CostParamList) (*response.CostList
 
 func (s *CostService) ApplyCategorys(rows *[]response.CostObject) error {
 	var categoryIds = make([]int, 0, len(*rows))
-
+	var categoryIdMap = make(map[int]struct{})
 	for _, row := range *rows {
+		if _, ok := categoryIdMap[row.CategoryId]; ok {
+			continue
+		}
 		categoryIds = append(categoryIds, row.CategoryId)
+		categoryIdMap[row.CategoryId] = struct{}{}
 	}
 
 	categoryObj := models.NewWealthCostCategory()
